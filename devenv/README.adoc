@@ -1,0 +1,29 @@
+[source,bash]
+----
+$ docker exec -it postgres_container /bin/bash
+$ psql -U postgres
+----
+
+
+[source,sql]
+----
+CREATE ROLE busd_r WITH PASSWORD 'busd_p' LOGIN BYPASSRLS;
+CREATE DATABASE busd
+    WITH TEMPLATE = template0
+    ENCODING = 'UTF8'
+    TABLESPACE = pg_default
+    LC_COLLATE = 'en_US.utf8'
+    LC_CTYPE = 'en_US.utf8'
+    CONNECTION LIMIT = 255;
+ALTER  DATABASE busd OWNER TO busd_r;
+GRANT  CONNECT ON DATABASE busd TO busd_r;
+
+\connect busd postgres;
+
+-- schema
+CREATE SCHEMA IF NOT EXISTS dev0;
+CREATE ROLE busd_dev0 WITH PASSWORD 'busd_p' LOGIN BYPASSRLS;
+ALTER  SCHEMA dev0 OWNER TO busd_dev0;
+ALTER  ROLE busd_dev0 IN DATABASE busd SET search_path to dev0;
+
+----
