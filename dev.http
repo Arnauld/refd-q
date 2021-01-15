@@ -4,6 +4,12 @@ Accept: application/json
 
 ###
 
+GET http://localhost:8080/api/v1/tenants
+Accept: application/json
+
+
+###
+
 POST http://localhost:8080/api/v1/health
 Accept: application/json
 Content-Type: application/graphql
