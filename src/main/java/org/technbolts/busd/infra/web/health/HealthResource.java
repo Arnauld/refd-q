@@ -1,4 +1,4 @@
-package org.technbolts.busd.infra.web;
+package org.technbolts.busd.infra.web.health;
 
 import io.smallrye.mutiny.Uni;
 import org.technbolts.busd.core.health.Health;
@@ -9,7 +9,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import java.util.concurrent.CompletableFuture;
 
 @Path("/api/v1/health")
 public class HealthResource {

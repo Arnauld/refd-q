@@ -8,6 +8,18 @@ GET http://localhost:8080/api/v1/tenants
 Accept: application/json
 
 
+### create a tenant
+
+PUT http://localhost:8080/api/v1/tenants
+Accept: application/json
+Content-Type: application/json
+Content-Encoding: UTF-8
+
+{
+  "id": 3,
+  "name": "idfm"
+}
+
 ###
 
 POST http://localhost:8080/api/v1/health
