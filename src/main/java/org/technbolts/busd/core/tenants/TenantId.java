@@ -22,4 +22,8 @@ public class TenantId {
     public int raw() {
         return raw;
     }
+
+    public String asString() {
+        return String.valueOf(raw);
+    }
 }

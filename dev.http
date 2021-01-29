@@ -6,6 +6,7 @@ Accept: application/json
 
 GET http://localhost:8080/api/v1/tenants
 Accept: application/json
+X-Tenant-ID: 3
 
 
 ### create a tenant
@@ -14,6 +15,7 @@ PUT http://localhost:8080/api/v1/tenants
 Accept: application/json
 Content-Type: application/json
 Content-Encoding: UTF-8
+X-Tenant-ID: 3
 
 {
   "id": 3,

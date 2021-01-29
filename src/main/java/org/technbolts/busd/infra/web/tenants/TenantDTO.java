@@ -11,9 +11,9 @@ public class TenantDTO {
     public final String name;
 
     @JsonbProperty("createdAt")
-    public final long createdAt;
+    public final Long createdAt;
 
-    public TenantDTO(int id, String name, long createdAt) {
+    public TenantDTO(int id, String name, Long createdAt) {
         this.id = id;
         this.name = name;
         this.createdAt = createdAt;
