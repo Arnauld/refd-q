@@ -1,4 +1,4 @@
-package org.technbolts.busd.infra.web.health;
+package org.technbolts.busd.infra.rest.health;
 
 import javax.json.bind.annotation.JsonbProperty;
 

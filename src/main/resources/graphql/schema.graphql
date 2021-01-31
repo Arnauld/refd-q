@@ -1,0 +1,43 @@
+enum ErrorCode {
+    NOT_FOUND
+    UNAUTHORIZED
+}
+
+type Property {
+    key: String!
+    value: String!
+}
+
+type Error {
+    code: ErrorCode!
+    args: [Property!]!
+    message: String!
+}
+
+# =========================================================
+
+type Tenant {
+    id: Int!
+    name: String!
+    code: String!
+}
+
+input NewTenant {
+    name: String!
+    code: String!
+}
+
+type NewTenantResult {
+    tenant: Tenant
+    error: Error
+}
+
+# =========================================================
+
+type Query {
+    tenants(glob:String): [Tenant]
+}
+
+type Mutation {
+    newTenant(in: NewTenant): NewTenantResult
+}

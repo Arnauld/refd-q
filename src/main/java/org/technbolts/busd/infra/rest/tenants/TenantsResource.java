@@ -1,14 +1,16 @@
-package org.technbolts.busd.infra.web.tenants;
+package org.technbolts.busd.infra.rest.tenants;
 
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import org.jboss.logging.Logger;
+import org.technbolts.busd.core.BasicExecutionContext;
 import org.technbolts.busd.core.Caller;
 import org.technbolts.busd.core.ExecutionContext;
+import org.technbolts.busd.core.tenants.NewTenant;
 import org.technbolts.busd.core.tenants.Tenant;
 import org.technbolts.busd.core.tenants.TenantId;
 import org.technbolts.busd.core.tenants.Tenants;
-import org.technbolts.busd.infra.web.ErrorDTO;
+import org.technbolts.busd.infra.rest.ErrorDTO;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -47,13 +49,13 @@ public class TenantsResource {
 
     private ExecutionContext executionContext(String tenantIdAsString) {
         TenantId tenantId = tenantId(parseInt(tenantIdAsString));
-        return new ExecutionContext(tenantId, Caller.caller("a007", AGENT));
+        return new BasicExecutionContext(tenantId, Caller.caller("a007", AGENT));
     }
 
     @PUT
     public Uni<Response> create(@HeaderParam("X-Tenant-ID") String tenantId, TenantInputDTO input) {
         return tenants
-                .create(executionContext(tenantId), input.id, input.name)
+                .create(executionContext(tenantId), toNewTenant(input))
                 .map(this::toDTO)
                 .map(dto -> Response.created(URI.create("/api/v1/tenants/" + dto.id)).entity(dto).build())
                 .onFailure()
@@ -61,6 +63,10 @@ public class TenantsResource {
                     LOG.error("Oops", throwable);
                     return Response.status(BAD_REQUEST).entity(ErrorDTO.errorDTO(throwable)).build();
                 });
+    }
+
+    private NewTenant toNewTenant(TenantInputDTO input) {
+        return new NewTenant(input.id, input.name, input.code);
     }
 
     private TenantDTO toDTO(Tenant tenant) {

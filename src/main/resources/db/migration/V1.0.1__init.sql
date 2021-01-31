@@ -127,9 +127,9 @@ $proc$;
 
 -- tag::tenant[]
 CREATE TABLE IF NOT EXISTS tenants (
-                                       id   SERIAL NOT NULL PRIMARY KEY,
-                                       code TEXT   NOT NULL UNIQUE,
-                                       name TEXT   NOT NULL UNIQUE
+       id   SERIAL NOT NULL PRIMARY KEY,
+       code TEXT   NOT NULL UNIQUE,
+       name TEXT   NOT NULL UNIQUE
 );
 
 CREATE OR REPLACE PROCEDURE add_tenant_meta(table_name text)

@@ -1,4 +1,4 @@
-package org.technbolts.busd.infra.web.tenants;
+package org.technbolts.busd.infra.rest.tenants;
 
 import javax.json.bind.annotation.JsonbProperty;
 

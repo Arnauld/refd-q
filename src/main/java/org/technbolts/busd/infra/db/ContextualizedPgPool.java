@@ -1,8 +1,10 @@
 package org.technbolts.busd.infra.db;
 
 import io.quarkus.reactive.datasource.ReactiveDataSource;
+import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import io.vertx.mutiny.pgclient.PgPool;
+import io.vertx.mutiny.sqlclient.SqlClientHelper;
 import io.vertx.mutiny.sqlclient.SqlConnection;
 import io.vertx.mutiny.sqlclient.Tuple;
 import org.jboss.logging.Logger;
@@ -10,8 +12,8 @@ import org.technbolts.busd.core.ExecutionContext;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
@@ -27,13 +29,17 @@ public class ContextualizedPgPool {
         this.pgPool = pgPool;
     }
 
-    public Uni<SqlConnection> connection(ExecutionContext context) {
-        return pgPool.getConnection()
-                .onItem()
-                .transformToUni(conn -> contextualize(context, conn));
+    public <T> Uni<T> withConnectionUni(ExecutionContext context, Function<SqlConnection, Uni<? extends T>> func) {
+        return SqlClientHelper.usingConnectionUni(pgPool, sqlConnection ->
+                contextualize(context, sqlConnection).onItem().transformToUni(func));
     }
 
-    public Uni<SqlConnection> contextualize(final ExecutionContext context, final SqlConnection conn) {
+    public <T> Multi<T> withConnectionMulti(ExecutionContext context, Function<SqlConnection, Multi<? extends T>> func) {
+        return SqlClientHelper.usingConnectionMulti(pgPool, sqlConnection ->
+                contextualize(context, sqlConnection).onItem().transformToMulti(func));
+    }
+
+    protected Uni<SqlConnection> contextualize(final ExecutionContext context, final SqlConnection conn) {
         List<Tuple> tuples = asList(
                 Tuple.of("var.caller_type", context.caller().type().name()),
                 Tuple.of("var.caller_id", context.caller().id()),

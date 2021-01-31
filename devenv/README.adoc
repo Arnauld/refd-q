@@ -25,6 +25,8 @@ DROP SCHEMA dev0;
 REASSIGN OWNED BY busd_dev0 TO postgres;
 DROP OWNED BY busd_dev0;
 DROP ROLE busd_dev0;
+DROP ROLE busd_dev0_mig;
+DROP ROLE busd_dev0_app;
 
 
 -- schema
