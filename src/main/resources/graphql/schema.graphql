@@ -14,6 +14,14 @@ type Error {
     message: String!
 }
 
+enum Role {
+    ROOT,
+    AGENT,
+    ADMIN
+}
+
+directive @auth(role : Role!) on FIELD_DEFINITION
+
 # =========================================================
 
 type Tenant {
@@ -35,7 +43,7 @@ type NewTenantResult {
 # =========================================================
 
 type Query {
-    tenants(glob:String): [Tenant]
+    tenants(glob:String): [Tenant] @auth(role: ROOT)
 }
 
 type Mutation {

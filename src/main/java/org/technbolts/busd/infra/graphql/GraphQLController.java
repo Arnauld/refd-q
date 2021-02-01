@@ -54,6 +54,7 @@ public class GraphQLController {
                             .collectItems().asList().subscribe().asCompletionStage();
                 }))
                 //.type("Mutation", builder -> builder.dataFetcher("addGroup", taskRepo::addGroup))
+                .directive("auth", new AuthDirective())
                 .build();
 
         TypeDefinitionRegistry typeDefinitionRegistry = typeDefinitionRegistry();

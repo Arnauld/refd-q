@@ -6,4 +6,6 @@ public interface ExecutionContext {
     TenantId tenantId();
 
     Caller caller();
+
+    boolean hasRole(String role);
 }

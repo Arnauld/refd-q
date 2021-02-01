@@ -22,6 +22,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.URI;
 import java.time.Instant;
+import java.util.HashSet;
 
 import static java.lang.Integer.parseInt;
 import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
@@ -49,7 +50,7 @@ public class TenantsResource {
 
     private ExecutionContext executionContext(String tenantIdAsString) {
         TenantId tenantId = tenantId(parseInt(tenantIdAsString));
-        return new BasicExecutionContext(tenantId, Caller.caller("a007", AGENT));
+        return new BasicExecutionContext(tenantId, Caller.caller("a007", AGENT), new HashSet<>());
     }
 
     @PUT

@@ -7,6 +7,9 @@ import org.technbolts.busd.core.Caller;
 import org.technbolts.busd.core.ExecutionContext;
 import org.technbolts.busd.core.tenants.TenantId;
 
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 /**
  * @author <a href="http://twitter.com/aloyer">@aloyer</a>
  */
@@ -17,11 +20,13 @@ public class QueryContext implements ExecutionContext {
         String xTenantId = request.getHeader("X-Tenant-ID");
         String xCallerId = request.getHeader("X-Caller-ID");
         String xCallerType = request.getHeader("X-Caller-Type");
+        String xRoles = request.getHeader("X-Roles");
 
         // TODO handle parsing error + missing/invalid input
         ExecutionContext executionContext = new BasicExecutionContext(
                 TenantId.tenantId(Integer.parseInt(xTenantId)),
-                Caller.caller(xCallerId, Caller.Type.valueOf(xCallerType))
+                Caller.caller(xCallerId, Caller.Type.valueOf(xCallerType)),
+                Stream.of(xRoles.split(",")).collect(Collectors.toSet())
         );
         return new QueryContext(routingContext, executionContext);
     }
@@ -42,5 +47,14 @@ public class QueryContext implements ExecutionContext {
     @Override
     public Caller caller() {
         return executionContext.caller();
+    }
+
+    @Override
+    public boolean hasRole(String role) {
+        return executionContext.hasRole(role);
+    }
+
+    public RoutingContext routingContext() {
+        return routingContext;
     }
 }
