@@ -32,7 +32,7 @@ Content-Encoding: UTF-8
 X-Tenant-ID: 3
 X-Caller-ID: 17
 X-Caller-Type: AGENT
-X-Roles: AGENT
+X-Roles: ROOT
 
 {
   tenants(glob:"a*") {
