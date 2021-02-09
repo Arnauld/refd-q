@@ -55,3 +55,10 @@ X-Caller-Type: AGENT
   "query": "{\ntenants(glob:\"a*\") {\n  id\n  code\n  name\n}}",
   "variables": null
 }
+
+###
+
+POST http://localhost:8080/graphql
+Accept: application/json
+Content-Type: application/json
+Content-Encoding: UTF-8
