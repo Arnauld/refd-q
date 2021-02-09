@@ -1,6 +1,7 @@
-package org.technbolts.busd.infra.graphql;
+package org.technbolts.busd.infra.graphql.tenant;
 
 import org.technbolts.busd.core.tenants.Tenant;
+import org.technbolts.busd.infra.graphql.Adapter;
 
 public class TenantGQL extends Adapter<Tenant> {
     public final int id;
