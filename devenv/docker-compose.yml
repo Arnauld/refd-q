@@ -2,7 +2,6 @@ version: '3.5'
 
 services:
   postgres:
-    container_name: postgres_container
     image: postgres:12.2
     command: ["postgres", "-c", "log_statement=all"]
     environment:
@@ -11,29 +10,34 @@ services:
       PGDATA: /data/postgres
     volumes:
       - postgres:/data/postgres
+    expose:
+      - 5432
     ports:
-      - "5432:5432"
-    networks:
-      - postgres
+      - "7000:5432"
     restart: unless-stopped
 
-  pgadmin:
-    container_name: pgadmin_container
-    image: dpage/pgadmin4:4.19
+  init-db:
+    build: scripts/
+    links:
+      - postgres
     environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
-    volumes:
-      - pgadmin:/root/.pgadmin
-    ports:
-      - "${PGADMIN_PORT:-5050}:80"
-    networks:
-      - postgres
-    restart: unless-stopped
+      PG_HOST: postgres
+      PG_PORT: 5432
+      PG_USER: postgres
+      PG_PASS: changeme
 
-networks:
-  postgres:
-    driver: bridge
+#  pgadmin:
+#    image: dpage/pgadmin4:4.19
+#    environment:
+#      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+#      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+#    volumes:
+#      - pgadmin:/root/.pgadmin
+#    ports:
+#      - "${PGADMIN_PORT:-5051}:80"
+#    networks:
+#      - postgres
+#    restart: unless-stopped
 
 volumes:
   postgres:
