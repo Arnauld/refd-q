@@ -2,6 +2,7 @@ package org.technbolts.busd.infra.graphql;
 
 import graphql.GraphQL;
 import graphql.schema.GraphQLSchema;
+import graphql.schema.TypeResolver;
 import graphql.schema.idl.RuntimeWiring;
 import graphql.schema.idl.SchemaGenerator;
 import graphql.schema.idl.SchemaParser;
@@ -54,10 +55,27 @@ public class GraphQLController {
     }
 
     private RuntimeWiring.Builder configure(RuntimeWiring.Builder builder) {
+        defaultConfigure(builder);
         for (GraphQLConfigurer configurer : configurers) {
             builder = configurer.configure(builder);
         }
         return builder;
+    }
+
+    protected void defaultConfigure(RuntimeWiring.Builder builder) {
+        TypeResolver tHasAuditMeta = env -> {
+            Object javaObject = env.getObject();
+            String objectType = javaObject.getClass().getName().replace("GQL", "");
+            return env.getSchema().getObjectType(objectType);
+        };
+        builder.type("HasAuditMeta", tw -> tw.typeResolver(tHasAuditMeta));
+
+        TypeResolver tError = env -> {
+            Object javaObject = env.getObject();
+            String objectType = javaObject.getClass().getName().replace("GQL", "");
+            return env.getSchema().getObjectType(objectType);
+        };
+        builder.type("Error", tw -> tw.typeResolver(tError));
     }
 
     protected TypeDefinitionRegistry typeDefinitionRegistry() {
