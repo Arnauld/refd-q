@@ -8,8 +8,17 @@ enum Role {
     ADMIN
 }
 
+enum Permission {
+    AUTHORITY_WRITE,
+    AUTHORITY_READ
+}
+
 directive @auth(role : Role!) on FIELD_DEFINITION
-directive @permission(perm : String!) on FIELD_DEFINITION
+directive @permission(perm : Permission!) on FIELD_DEFINITION
+
+extend type Query {
+    agentPermissions(id:Int!): [Permission]
+}
 
 # =========================================================
 #    Miscellaneous
@@ -69,7 +78,7 @@ interface HasAuditMeta {
     """ Creation timestamp since epoch in millis """
     created_at: Int
     """ Creator identifer  """
-    created_by: String @permission(perm:"audit_r")
+    created_by: String
     """ Creator Type """
     created_by_type: CallerType
 
@@ -92,6 +101,16 @@ interface Error {
     args: [Property!]!
     message: String!
 }
+
+type UnauthorizedError implements Error {
+    code: ErrorCode!
+    args: [Property!]!
+    message: String!
+    requiredPermissions: [String]
+}
+
+
+
 
 # =========================================================
 #    TENANTS
@@ -128,27 +147,32 @@ type Mutation {
 #    Organization
 # =========================================================
 
-type Organization {
+type Authority {
     id: Int!
     code: String!
-    label: [LocalizedLabel]
+    label(locales:[String]): [LocalizedLabel]
     legalName: String
     logo: ImageMeta
     postalAddress: Address
     phoneNumber: String
     webSite: String
     contactEmail: String
+    """ ("twitter":"@idfm")  """
     socialNetworks: [Property!]
 }
 
 type Operator {
     id: Int!
-    organisationId: Int!
-    parentId: Int
     code: String!
-    """ timestamp since epoch in millis """
+    """ Authority """
+    authorityId: Int!
+    """ Parent Operator """
+    parentId: Int
+    """ Children Operator """
+    childrenIds: [Int!]!
+    """ Timestamp since epoch in millis """
     deactivationDate: Int
-    label: [LocalizedLabel]
+    label(locales:[String]): [LocalizedLabel]
     legalName: String
     logo: ImageMeta
     capitalAmount: String
@@ -161,15 +185,15 @@ type Operator {
     contactEmail: String
     """
     e.g. ("twitter", "https://twitter.com/RATP_SmartSystM"),
-    ("linkedin","https://www.linkedin.com/company/ratpsmartsystems")
+         ("linkedin","https://www.linkedin.com/company/ratpsmartsystems")
     """
     socialNetworks: [Property!]
 }
 
-input CreateOrganizationInput {
+input CreateAuthorityInput {
     code: String!
-    label: [LocalizedLabelInput]
-    legalName: String
+    label: [LocalizedLabelInput!]!
+    legalName: String!
     # -- not part of the payload, since filled by REST APIc; logo: ImageMeta
     postalAddress: AddressInput
     phoneNumber: String
@@ -178,14 +202,13 @@ input CreateOrganizationInput {
     socialNetworks: [PropertyInput!]
 }
 
-type CreateOrganizationPayload {
-    organization: Organization
+type CreateAuthorityPayload {
+    authority: Authority
     error: Error
 }
 
-input UpdateOrganizationInput {
+input UpdateAuthorityInput {
     id: Int!
-    code: String
     label: [LocalizedLabelInput]
     legalName: String
     # -- not part of the payload, since filled by REST APIc; logo: ImageMeta
@@ -196,23 +219,24 @@ input UpdateOrganizationInput {
     socialNetworks: [PropertyInput!]
 }
 
-type UpdateOrganizationPayload {
-    organization: Organization
+type UpdateAuthorityPayload {
+    authority: Authority
     error: Error
 }
 
-type OrganizationPayload {
-    organization: Organization
+type AuthorityPayload {
+    authority: Authority
     error: Error
 }
 
 extend type Query {
-    organization(id: Int!): OrganizationPayload
+    """ Return current Authority """
+    authority: AuthorityPayload @permission(perm: AUTHORITY_READ)
 }
 
 extend type Mutation {
-    createOrganization(input: CreateOrganizationInput): CreateOrganizationPayload @auth(role:ROOT)
-    updateOrganisation(input: UpdateOrganizationInput): UpdateOrganizationPayload
+    createAuthority(input: CreateAuthorityInput): CreateAuthorityPayload @auth(role: ROOT)
+    updateAuthority(input: UpdateAuthorityInput): UpdateAuthorityPayload @permission(perm: AUTHORITY_WRITE)
 }
 
 
@@ -253,7 +277,7 @@ enum SupportTechnology {
 type SupportType {
     id: Int!
     code: String!
-    label: [LocalizedLabel]
+    label(locales:[String]): [LocalizedLabel]
     holderType: HolderType
     physicalType: PhysicalType
     supportTechnologies: [SupportTechnology]
@@ -264,7 +288,7 @@ type SupportType {
 type VAT {
     id: Int!
     code: String!
-    label: [LocalizedLabel]
+    label(locales:[String]): [LocalizedLabel]
     # 
     # Float number as a String @see BigDecimal
     # represents decimal floating-point numbers of arbitrary precision
