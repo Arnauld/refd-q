@@ -1,0 +1,27 @@
+[source,graphql]
+....
+mutation CR($in: CreateOrganizationInput) {
+  createOrganization(input: $in) {
+    organization {
+      id
+      webSite
+    }
+    error {
+      code
+      message
+      args {
+        key
+        value
+      }
+    }
+  }
+}
+....
+
+[source,json]
+....
+{"in": {
+  "code": "idfm",
+  "label": [{"locale": "fr", "label": "Ile de France Mobilité"}]
+}}
+....

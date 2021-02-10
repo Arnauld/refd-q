@@ -121,7 +121,7 @@ type Query {
 }
 
 type Mutation {
-    createTenant(input: CreateVehicleInput): CreateVehiclePayload @auth(role:ROOT)
+    createTenant(input: CreateTenantInput): CreateTenantPayload @auth(role:ROOT)
 }
 
 # =========================================================
@@ -207,7 +207,7 @@ type OrganizationPayload {
 }
 
 extend type Query {
-    organisation(id: Int): OrganizationPayload
+    organization(id: Int!): OrganizationPayload
 }
 
 extend type Mutation {

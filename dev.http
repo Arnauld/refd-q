@@ -62,3 +62,19 @@ POST http://localhost:8080/graphql
 Accept: application/json
 Content-Type: application/json
 Content-Encoding: UTF-8
+
+
+###
+
+POST http://localhost:8080/graphql
+Accept: application/json
+Content-Type: application/json
+Content-Encoding: UTF-8
+X-Tenant-ID: 3
+X-Caller-ID: 17
+X-Caller-Type: AGENT
+
+{
+  "query": "{\ntenants(glob:\"a*\") {\n  id\n  code\n  name\n}}",
+  "variables": null
+}
