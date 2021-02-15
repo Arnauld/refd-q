@@ -57,5 +57,6 @@ if __name__ == '__main__':
     execute(db_cfg, ['SELECT version()'])
     execute(db_cfg, file_to_sqls('create-utilities.sql', '-- ;;'))
     execute(db_cfg, file_to_sqls('create-db.sql'))
+    execute(db_cfg, file_to_sqls('create-db-post-init.sql'))
     execute({**db_cfg, **db_custom}, file_to_sqls('create-utilities.sql', '-- ;;'))
     execute({**db_cfg, **db_custom}, file_to_sqls('create-schema.sql'))
