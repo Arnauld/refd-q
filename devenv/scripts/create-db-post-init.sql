@@ -1,0 +1,2 @@
+ALTER DATABASE busd OWNER TO busd_r;
+GRANT CONNECT ON DATABASE busd TO busd_r;

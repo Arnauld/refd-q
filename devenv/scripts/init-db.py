@@ -4,6 +4,7 @@
 import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 import os
+import time
 
 
 def config():
@@ -12,6 +13,26 @@ def config():
             'password': os.getenv('PG_PASS'),
             'host': os.getenv('PG_HOST'),
             'port': os.getenv('PG_PORT')}
+
+
+def wait_database(params, retry_count=4, retry_delay_in_sec=0.500):
+    count = 1
+    while count <= retry_count:
+        count += 1
+        try:
+            print('Connecting to the PostgreSQL database... {0}/{1}'.format(count, retry_count))
+            conn = psycopg2.connect(**params)
+            cur = conn.cursor()
+            cur.execute("SELECT version();")
+            res = cur.fetchone()
+            print(res)
+            cur.close()
+            return True
+        except (Exception, psycopg2.DatabaseError) as error:
+            # print(error)
+            print('.')
+        time.sleep(retry_delay_in_sec)
+    return False
 
 
 def execute(params, sqls):
@@ -54,9 +75,12 @@ def file_to_sqls(filename, delimiter=';'):
 if __name__ == '__main__':
     db_cfg = config()
     db_custom = {'dbname': 'busd'}
-    execute(db_cfg, ['SELECT version()'])
-    execute(db_cfg, file_to_sqls('create-utilities.sql', '-- ;;'))
-    execute(db_cfg, file_to_sqls('create-db.sql'))
-    execute(db_cfg, file_to_sqls('create-db-post-init.sql'))
-    execute({**db_cfg, **db_custom}, file_to_sqls('create-utilities.sql', '-- ;;'))
-    execute({**db_cfg, **db_custom}, file_to_sqls('create-schema.sql'))
+    if wait_database(db_cfg):
+        execute(db_cfg, ['SELECT version()'])
+        execute(db_cfg, file_to_sqls('create-utilities.sql', '-- ;;'))
+        execute(db_cfg, file_to_sqls('create-db.sql'))
+        execute(db_cfg, file_to_sqls('create-db-post-init.sql'))
+        execute({**db_cfg, **db_custom}, file_to_sqls('create-utilities.sql', '-- ;;'))
+        execute({**db_cfg, **db_custom}, file_to_sqls('create-schema.sql'))
+    else:
+        raise Exception('Unable to connect to database')
