@@ -18,13 +18,4 @@ public class LocalizedLabelGQL {
         this.label = label;
     }
 
-    public static List<LocalizedLabelGQL> listFromMap(List<Map<String, String>> label) {
-        return label.stream()
-                .map(LocalizedLabelGQL::fromMap)
-                .collect(toList());
-    }
-
-    private static LocalizedLabelGQL fromMap(Map<String, String> m) {
-        return new LocalizedLabelGQL(m.get("locale"), m.get("label"));
-    }
 }
