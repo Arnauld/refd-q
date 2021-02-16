@@ -15,7 +15,7 @@ def config():
             'port': os.getenv('PG_PORT')}
 
 
-def wait_database(params, retry_count=4, retry_delay_in_sec=0.500):
+def wait_database(params, retry_count=100, retry_delay_in_sec=0.500):
     count = 1
     while count <= retry_count:
         count += 1
