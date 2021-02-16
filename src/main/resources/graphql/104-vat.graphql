@@ -1,0 +1,48 @@
+type VAT {
+    id: Int!
+    code: String!
+    label(locales:[String]): [LocalizedLabel]
+    """
+    Float number as a String @see BigDecimal
+    represents decimal floating-point numbers of arbitrary precision
+    """
+    rate: String!
+}
+
+input CreateVATInput {
+    code:String!
+    label:[LocalizedLabelInput!]!
+    rate:String!
+}
+
+input UpdateVATInput {
+    code:String!
+    label:[LocalizedLabelInput!]!
+    rate:String!
+}
+
+type VATEdge {
+    node:VAT
+}
+type VATsConnection {
+    page:PageInfo
+    edges:[VATEdge]
+}
+
+union CreateVATPayload = VAT | Error
+union UpdateVATPayload = VAT | Error
+union VATPayload = VAT | Error
+union VATsConnectionPayload = VATsConnection | Error
+
+extend type Query {
+    vatById(id:Int!): VATPayload
+    vatByCode(code:String!): VATPayload
+    vats(first:Int, after:String):VATsConnectionPayload
+}
+
+extend type Mutation {
+    createVAT(input: CreateVATInput): CreateVATPayload
+    updateVAT(input: UpdateVATInput): UpdateVATPayload
+}
+
+

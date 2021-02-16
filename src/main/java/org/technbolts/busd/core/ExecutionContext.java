@@ -15,7 +15,7 @@ public interface ExecutionContext {
         }
 
         @Override
-        public boolean hasRole(String role) {
+        public boolean hasPermission(String permission) {
             return false;
         }
     };
@@ -24,7 +24,7 @@ public interface ExecutionContext {
 
     Caller caller();
 
-    boolean hasRole(String role);
+    boolean hasPermission(String permission);
 
     class InvalidContextException extends RuntimeException {
         public InvalidContextException() {

@@ -1,0 +1,52 @@
+type Vehicle {
+    id: Int!
+    code: String!
+    label(locales:[String]): [LocalizedLabel]
+    operatorId: Int
+    transportMode: Int
+    externalCode: String
+}
+
+input CreateVehicleInput {
+    code: String!
+    label: [LocalizedLabelInput!]!
+    operatorId: Int
+    transportModeId: Int
+    externalCode: String
+}
+
+input UpdateVehicleInput {
+    code: String
+    """
+    Localized label.
+    If provided, the label will replace all existing ones.
+    """
+    label: [LocalizedLabelInput!]
+    operatorId: Int
+    transportModeId: Int
+    externalCode: String
+}
+
+type VehicleEdge {
+    node:VehicleEdge
+}
+
+type VehiclesConnection {
+    pageInfo:PageInfo
+    edges:[VehicleEdge]
+}
+
+union CreateVehiclePayload = Vehicle | Error
+union UpdateVehiclePayload = Vehicle | Error
+union VehiclePayload = Vehicle | Error
+union VehiclesConnectionPayload = VehiclesConnection | Error
+
+extend type Query {
+    vehicleById(id:Int!):VehiclePayload @auth(permission: VEHICLE_READ)
+    vehicles(first:Int, after:String):VehiclesConnectionPayload @auth(permission: VEHICLE_READ)
+}
+
+extend type Mutation {
+    createVehicle(input: CreateVehicleInput): CreateVehiclePayload @auth(permission: VEHICLE_WRITE)
+    updateVehicle(input: UpdateVehicleInput): UpdateVehiclePayload @auth(permission: VEHICLE_WRITE)
+}

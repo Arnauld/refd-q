@@ -1,0 +1,299 @@
+type Authority {
+    """
+    Internal identifier of the authority
+    """
+    id: Int!
+
+    """
+    Readable and unique identifier of the authority
+    """
+    code: String!
+
+    """
+    Localized label.
+    """
+    label(locales:[String]): [LocalizedLabel]
+
+    """
+    ID of the time zone which this authority operates on
+    """
+    timezone: String!
+
+    legalName: String
+
+    """
+    Logo's metadata
+    """
+    logo: ImageMeta
+    postalAddress: Address
+    phoneNumber: String
+    webSite: String
+
+    """
+    Email which customers can use to contact this authority
+    """
+    contactEmail: String
+
+    """
+    Social networks identifiers
+    e.g. ("twitter", "https://twitter.com/RATP_SmartSystM"),
+    ("linkedin","https://www.linkedin.com/company/ratpsmartsystems")
+    """
+    socialNetworks: [Property!]
+}
+
+type Operator {
+    """
+    Internal identifier of the Operator
+    """
+    id: Int!
+
+    """
+    Readable and unique identifier of the Operator
+    """
+    code: String!
+
+    """
+    Authority identifier this operator belongs to
+    """
+    authorityId: Int!
+
+    """
+    Parent Operator identifier (in case of operator hierarchy)
+    """
+    parentId: Int
+
+    """
+    Children Operator identifiers (in case of operator hierarchy)
+    """
+    childrenIds: [Int!]!
+
+    """
+    Indicated whether or not the operator has been deactivated and since when.
+    Timestamp since epoch in millis.
+    """
+    deactivationDate: Int
+
+    """
+    Localized Label.
+    Only value for the specified locale are returned if it exists.
+    Note that missing label won't have any entry in the list.
+    """
+    label(locales:[String]): [LocalizedLabel]
+    legalName: String
+
+    """
+    Logo's metadata
+    """
+    logo: ImageMeta
+    capitalAmount: String
+    registrationNumber: String
+    vatNumber: String
+    headOfficeAddress: Address
+    postalAddress: Address
+    phoneNumber: String
+    webSite: String
+
+    """
+    Email which customers can use to contact this operator.
+    """
+    contactEmail: String
+
+    """
+    Social networks identifiers
+    e.g. ("twitter", "https://twitter.com/RATP_SmartSystM"),
+    ("linkedin","https://www.linkedin.com/company/ratpsmartsystems")
+    """
+    socialNetworks: [Property!]
+}
+
+input CreateAuthorityInput {
+    """
+    Readable and unique identifier of the authority
+    """
+    code: String!
+
+    """
+    Localized label.
+    """
+    label: [LocalizedLabelInput!]!
+
+    """
+    ID of the time zone which this authority operates on
+    """
+    timezone: String!
+
+    legalName: String!
+    # -- not part of the payload, since filled by REST APIc;
+    # logo: ImageMeta
+    postalAddress: AddressInput
+    phoneNumber: String
+    webSite: String
+
+    """
+    Email which customers can use to contact this authority
+    """
+    contactEmail: String
+
+    """
+    Social networks identifiers
+    e.g. ("twitter", "https://twitter.com/RATP_SmartSystM"),
+    ("linkedin","https://www.linkedin.com/company/ratpsmartsystems")
+    """
+    socialNetworks: [PropertyInput!]
+}
+
+input UpdateAuthorityInput {
+    """
+    Internal identifier of the authority
+    """
+    id: Int!
+
+    """
+    Localized label.
+    If provided, the label will replace all existing ones.
+    """
+    label: [LocalizedLabelInput]
+
+    legalName: String
+    postalAddress: AddressInput
+    phoneNumber: String
+    webSite: String
+
+    """
+    Email which customers can use to contact this authority
+    """
+    contactEmail: String
+
+    """
+    Social networks identifiers.
+    If provided, the identifiers will replace all existing ones.
+    e.g. ("twitter", "https://twitter.com/RATP_SmartSystM"),
+    ("linkedin","https://www.linkedin.com/company/ratpsmartsystems")
+    """
+    socialNetworks: [PropertyInput!]
+}
+
+input CreateOperatorInput {
+    """
+    Readable and unique identifier of the Operator
+    """
+    code: String!
+
+    """
+    Parent Operator identifier (in case of operator hierarchy)
+    """
+    parentId: Int
+
+    """
+    Indicated whether or not the operator has been deactivated and since when.
+    Timestamp since epoch in millis.
+    """
+    deactivationDate: Int
+
+    """
+    Localized Label.
+    """
+    label: [LocalizedLabelInput!]!
+    legalName: String
+
+    capitalAmount: String
+    registrationNumber: String
+    vatNumber: String
+    headOfficeAddress: AddressInput
+    postalAddress: AddressInput
+    phoneNumber: String
+    webSite: String
+
+    """
+    Email which customers can use to contact this operator.
+    """
+    contactEmail: String
+
+    """
+    Social networks identifiers
+    e.g. ("twitter", "https://twitter.com/RATP_SmartSystM"),
+    ("linkedin","https://www.linkedin.com/company/ratpsmartsystems")
+    """
+    socialNetworks: [PropertyInput!]
+}
+
+input UpdateOperatorInput {
+    """
+    Internal identifier of the Operator
+    """
+    id: Int!
+
+    """
+    Parent Operator identifier (in case of operator hierarchy)
+    """
+    parentId: Int
+
+    """
+    Indicated whether or not the operator has been deactivated and since when.
+    Timestamp since epoch in millis.
+    """
+    deactivationDate: Int
+
+    """
+    Localized label.
+    If provided, the label will replace all existing ones.
+    """
+    label: [LocalizedLabelInput!]!
+    legalName: String
+
+    capitalAmount: String
+    registrationNumber: String
+    vatNumber: String
+    headOfficeAddress: AddressInput
+    postalAddress: AddressInput
+    phoneNumber: String
+    webSite: String
+
+    """
+    Email which customers can use to contact this operator.
+    """
+    contactEmail: String
+
+    """
+    Social networks identifiers
+    e.g. ("twitter", "https://twitter.com/RATP_SmartSystM"),
+    ("linkedin","https://www.linkedin.com/company/ratpsmartsystems")
+    """
+    socialNetworks: [PropertyInput!]
+}
+
+type OperatorEdge {
+    node:Operator
+}
+type OperatorsConnection {
+    pageInfo:PageInfo
+    edges:[OperatorEdge]
+}
+
+union CreateAuthorityPayload = Authority | Error
+union UpdateAuthorityPayload = Authority | Error
+union AuthorityPayload = Authority | Error
+union CreateOperatorPayload = Operator | Error
+union UpdateOperatorPayload = Operator | Error
+union OperatorPayload = Operator | Error
+union OperatorsConnectionPayload = OperatorsConnection | Error
+
+extend type Query {
+    """
+    Return the authority the logged user belongs to
+    """
+    authority: AuthorityPayload @auth(permission: AUTHORITY_READ)
+
+    operatorById(id:Int!):OperatorPayload @auth(permission: OPERATOR_READ)
+    operators(first:Int, after:String):OperatorsConnectionPayload @auth(permission: OPERATOR_READ)
+}
+
+extend type Mutation {
+    createAuthority(input: CreateAuthorityInput): CreateAuthorityPayload @auth(permission: AUTHORITY_CREATE)
+    updateAuthority(input: UpdateAuthorityInput): UpdateAuthorityPayload @auth(permission: AUTHORITY_WRITE)
+    updateAuthorityCode(id:Int!, code:String!):   UpdateAuthorityPayload @auth(permission: AUTHORITY_WRITE)
+    createOperator(input: CreateOperatorInput):   CreateOperatorPayload @auth(permission: OPERATOR_WRITE)
+    updateOperator(input: UpdateOperatorInput):   UpdateOperatorPayload @auth(permission: OPERATOR_WRITE)
+    updateOperatorCode(id:Int!, code:String!):    UpdateOperatorPayload @auth(permission: OPERATOR_WRITE)
+}

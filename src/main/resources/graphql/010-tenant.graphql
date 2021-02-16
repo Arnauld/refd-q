@@ -1,0 +1,51 @@
+"""
+Tenant
+"""
+type Tenant {
+    """
+    Identifier of the tenant
+    """
+    id: Int!
+
+    """
+    Readable and unique identifier of the tenant
+    """
+    code: String!
+
+    """
+    Descriptive Label
+    """
+    label: String!
+}
+
+type Tenants{
+    tenants: [Tenant!]!
+}
+
+"""
+Input to create a new Tenant
+"""
+input CreateTenantInput {
+    """
+    Readable and unique identifier of the tenant
+    """
+    code: String!
+
+    """
+    Descriptive Label
+    """
+    label: String!
+}
+
+"""
+Result of the Tenant creation
+"""
+union CreateTenantPayload = Tenant|Error
+
+type Query {
+    tenants(globPattern: String): Tenants @auth(permission:TENANT_READ)
+}
+
+type Mutation {
+    createTenant(input: CreateTenantInput): CreateTenantPayload @auth(permission:TENANT_WRITE)
+}

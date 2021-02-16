@@ -1,0 +1,16 @@
+package org.technbolts.busd.core;
+
+public enum Permission {
+    TENANT_READ,
+    TENANT_WRITE,
+    AUDIT_META_READ,
+    AUTHORITY_CREATE,
+    AUTHORITY_WRITE,
+    AUTHORITY_READ,
+    OPERATOR_READ,
+    OPERATOR_WRITE,
+    TRANSPORT_MODE_READ,
+    TRANSPORT_MODE_WRITE,
+    VEHICLE_READ,
+    VEHICLE_WRITE,
+}

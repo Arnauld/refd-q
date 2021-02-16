@@ -1,0 +1,15 @@
+enum PaymentMode {
+    CASH,
+    CARD,
+    CHECK,
+    VOUCHER,
+    DEBIT,
+    OTHER
+}
+
+type DistributionChannel {
+    id: Int!
+    code: String!
+    label: String!
+    supportedPaymentModes: [PaymentMode]
+}

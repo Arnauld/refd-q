@@ -1,0 +1,158 @@
+# =========================================================
+#    Autorisation
+# =========================================================
+enum Permission {
+    #
+    # ROOT permissions
+    #
+    TENANT_READ,
+    TENANT_WRITE,
+    #
+    #
+    AUDIT_META_READ,
+    #
+    #
+    AUTHORITY_CREATE,
+    AUTHORITY_WRITE,
+    AUTHORITY_READ,
+    OPERATOR_READ,
+    OPERATOR_WRITE,
+    #
+    TRANSPORT_MODE_READ,
+    TRANSPORT_MODE_WRITE,
+    VEHICLE_READ,
+    VEHICLE_WRITE,
+}
+
+"""
+Mark a field, query or mutation with the required permission.
+Throw an UnauthorizedError if none of the condition is met.
+"""
+directive @auth(permission : Permission) on FIELD_DEFINITION
+
+"""
+Mark a field, query or mutation with the required role or permission.
+On the contrary of '@auth' no error is thrown, 'null' value is provided.
+"""
+directive @requires(permission : Permission) on FIELD_DEFINITION
+
+extend type Query {
+    """ Returns the list of permission of the currently logged user """
+    myPermissions: [Permission]
+}
+
+# =========================================================
+#    Miscellaneous
+# =========================================================
+
+"""
+Generic key/value property
+"""
+type Property {
+    key: String!
+    value: String!
+}
+
+"""
+Input to create/update Property
+"""
+input PropertyInput {
+    key: String!
+    value: String!
+}
+
+"""
+Localized label
+"""
+type LocalizedLabel {
+    locale: String!
+    label: String!
+}
+
+input LocalizedLabelInput {
+    locale: String!
+    label: String!
+}
+
+type ImageMeta {
+    id: Int!
+    name: String
+    contentType: String
+    metadata: [Property!]
+}
+
+type Address {
+    address1: String
+    address2: String
+    city: String
+    zipcode: String
+    country: String
+}
+
+input AddressInput {
+    address1: String
+    address2: String
+    city: String
+    zipcode: String
+    country: String
+}
+
+enum CallerType {
+    AGENT,
+    CUSTOMER,
+    SERVICE,
+    DEVICE
+}
+
+interface HasAuditMeta {
+    """
+    Creation timestamp since epoch in millis
+    """
+    created_at: Int
+    """
+    Creator identifier
+    """
+    created_by: String @requires(permission:AUDIT_META_READ)
+    """
+    Creator Type
+    """
+    created_by_type: CallerType @requires(permission:AUDIT_META_READ)
+
+    """
+    Last update timestamp since epoch in millis
+    """
+    updated_at: Int
+    """
+    Last update initiator identifer
+    """
+    updated_by: String @requires(permission:AUDIT_META_READ)
+    """
+    Last update initiator Type
+    """
+    updated_by_type: CallerType @requires(permission:AUDIT_META_READ)
+}
+
+"""
+Error Code
+"""
+enum ErrorCode {
+    NOT_FOUND,
+    UNAUTHORIZED,
+    BAD_REQUEST
+}
+
+"""
+Generic Error interface
+"""
+type Error {
+    code: ErrorCode!
+    args: [Property!]!
+    message: String!
+}
+
+type PageInfo {
+    hasNextPage: Boolean!
+    hasPreviousPage: Boolean!
+    startCursor: String!
+    endCursor: String!
+}

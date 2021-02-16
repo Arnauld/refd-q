@@ -1,0 +1,13 @@
+enum SupportingDocumentValidationMode {
+    A_PRIORI,
+    A_POSTERIORI
+}
+
+type SupportingDocumentType {
+    id: Int!
+    code: String!
+    shortLabel: [LocalizedLabel]
+    longLabel: [LocalizedLabel]
+    description: [LocalizedLabel]
+    validationModes: [SupportingDocumentValidationMode]
+}

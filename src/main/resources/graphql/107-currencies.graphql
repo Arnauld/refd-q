@@ -1,0 +1,8 @@
+type Currency {
+    id: Int!
+    code: String!
+    label: String
+    unit_multiplier: Int
+}
+
+

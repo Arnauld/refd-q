@@ -8,14 +8,14 @@ import org.technbolts.busd.core.Caller;
 import org.technbolts.busd.core.ExecutionContext;
 import org.technbolts.busd.core.tenants.TenantId;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toSet;
+import static org.technbolts.busd.core.RoleToPermissionMapper.permissionsFor;
 
 /**
  * @author <a href="http://twitter.com/aloyer">@aloyer</a>
@@ -35,7 +35,7 @@ public class QueryContext implements ExecutionContext {
             ExecutionContext executionContext = new BasicExecutionContext(
                     parseTenantId(xTenantId).orElse(null),
                     parseCaller(xCallerId, xCallerType).orElse(null),
-                    parseRoles(xRoles)
+                    parseRoles(xRoles).stream().flatMap(role -> permissionsFor(role).stream()).collect(toSet())
             );
             return new QueryContext(routingContext, executionContext);
         } catch (Exception e) {
@@ -46,7 +46,8 @@ public class QueryContext implements ExecutionContext {
     private static Set<String> parseRoles(String xRoles) {
         if (xRoles == null)
             return Collections.emptySet();
-        return Stream.of(xRoles.split(",")).collect(Collectors.toSet());
+        return Stream.of(xRoles.split(","))
+                .collect(toSet());
     }
 
     private static Optional<Caller> parseCaller(String xCallerId, String xCallerType) {
@@ -91,8 +92,8 @@ public class QueryContext implements ExecutionContext {
     }
 
     @Override
-    public boolean hasRole(String role) {
-        return executionContext.hasRole(role);
+    public boolean hasPermission(String permission) {
+        return executionContext.hasPermission(permission);
     }
 
     public RoutingContext routingContext() {

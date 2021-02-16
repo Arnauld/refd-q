@@ -1,0 +1,108 @@
+enum HolderType {
+    AGENT,
+    CUSTOMER_ANONYMOUS,
+    CUSTOMER_DECLARATIVE,
+    CUSTOMER_NOMINATIVE
+}
+
+enum PhysicalType {
+    PAPER,
+    CONTACTLESS_CARD,
+    CONTACTLESS_TICKET,
+    CONTACTLESS_TOKEN,
+    MOBILE_APP
+}
+
+enum SupportTechnology {
+    QR_CODE,
+    NFC_CALYPSO_PRIME,
+    NFC_CALYPSO_BASIC,
+    NFC_CALYPSO_LIGHT,
+    NFC_CALYPSO_APPLET,
+    NFC_CALYPSO_HCE,
+    NFC_MIFARE_CLASSIC,
+    NFC_MIFARE_DESFIRE,
+    NFC_MIFARE_PLUS,
+    NFC_EMV,
+    AUTO
+}
+
+type SupportType {
+    """
+    Internal identifier of the support type
+    """
+    id: Int!
+
+    """
+    Readable and unique identifier of the support type
+    """
+    code: String!
+
+    """
+    Localized Label.
+    Only value for the specified locale are returned if it exists.
+    Note that missing label won't have any entry in the list.
+    """
+    label(locales:[String]): [LocalizedLabel!]!
+    holderType: HolderType
+    physicalType: PhysicalType
+    supportTechnologies: [SupportTechnology!]!
+    networkCodes: [String!]!
+    greenListEnabled: Boolean
+}
+
+type SupportTypeEdge {
+    node:SupportType
+}
+
+type SupportTypesConnection {
+    pageInfo:PageInfo
+    edges:[SupportTypeEdge]
+}
+
+input CreateSupportTypeInput {
+    """
+    Readable and unique identifier of the support type
+    """
+    code: String!
+    label: [LocalizedLabelInput!]!
+    holderType: HolderType
+    physicalType: PhysicalType
+    supportTechnologies: [SupportTechnology!]
+    networkCodes: [String!]
+    greenListEnabled: Boolean
+}
+
+input UpdateSupportTypeInput {
+    """
+    Internal identifier of the support type
+    """
+    id:Int!
+    code: String!
+
+    """
+    Localized label.
+    If provided, the label will replace all existing ones.
+    """
+    label: [LocalizedLabelInput!]
+    holderType: HolderType
+    physicalType: PhysicalType
+    supportTechnologies: [SupportTechnology!]
+    networkCodes: [String!]
+    greenListEnabled: Boolean
+}
+
+union SupportTypePayload = SupportType | Error
+union SupportTypesConnectionPayload = SupportTypesConnection | Error
+union CreateSupportTypePayload = SupportType | Error
+union UpdateSupportTypePayload = SupportType | Error
+
+extend type Query {
+    supportTypeById(id:Int!):SupportTypePayload
+    supportTypes(first:Int, after:String):SupportTypesConnectionPayload
+}
+
+extend type Mutation {
+    createSupportType(input:CreateSupportTypeInput): CreateSupportTypePayload
+    updateSupportType(input:UpdateSupportTypeInput): UpdateSupportTypePayload
+}

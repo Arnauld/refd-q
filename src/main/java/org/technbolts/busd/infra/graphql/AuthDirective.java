@@ -22,13 +22,13 @@ public class AuthDirective implements SchemaDirectiveWiring {
         GraphQLFieldsContainer parentType = env.getFieldsContainer();
 
         DataFetcher<?> originalFetcher = env.getCodeRegistry().getDataFetcher(parentType, field);
-        String targetAuthRole = (String) env.getDirective().getArgument("role").getValue();
+        String permission = (String) env.getDirective().getArgument("permission").getValue();
 
         // build a data fetcher that first checks authorisation roles before then calling the original data fetcher
         DataFetcher<?> authDataFetcher = DataFetcherFactories.wrapDataFetcher(originalFetcher, (dataFetchingEnvironment, value) -> {
             QueryContext context = dataFetchingEnvironment.getContext();
-            LOG.infof("Checking auth(%s) on field '%s'", targetAuthRole, field.getName());
-            if (context.hasRole(targetAuthRole)) {
+            LOG.infof("Checking auth(%s) on field '%s'", permission, field.getName());
+            if (context.hasPermission(permission)) {
                 return value;
             } else {
                 return null;
