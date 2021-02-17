@@ -138,7 +138,8 @@ public class OrganizationGraphQLConfigurer implements GraphQLConfigurer {
     }
 
     private AuthorityGQL toAuthorityGQL(Authority oql) {
-        return new AuthorityGQL();
+        AuthorityGQL gql = new AuthorityGQL();
+        return gql;
     }
 
     private OperatorGQL toOperatorGQL(Operator oql) {

@@ -8,8 +8,8 @@ CREATE TYPE address_type AS (
 );
 -- end::address_type[]
 
--- tag::organization[]
-CREATE TABLE IF NOT EXISTS organizations (
+-- tag::authorities[]
+CREATE TABLE IF NOT EXISTS authorities (
     id                   SERIAL NOT NULL PRIMARY KEY,
     code                 TEXT   NOT NULL,
     label                JSONB  NOT NULL,
@@ -22,22 +22,22 @@ CREATE TABLE IF NOT EXISTS organizations (
     social_networks      JSONB
 );
 
-CALL add_tenant_meta('organizations');
-CALL add_tenant_trigger('organizations');
-CALL add_tenant_isolation('organizations');
-CALL add_audit_meta('organizations');
-CALL add_audit_meta_trigger('organizations');
-CALL add_delete_meta('organizations');
-CALL add_audit_log_trigger('organizations', 'conf', audit_meta_fields() || audit_delete_fields());
+CALL add_tenant_meta('authorities');
+CALL add_tenant_trigger('authorities');
+CALL add_tenant_isolation('authorities');
+CALL add_audit_meta('authorities');
+CALL add_audit_meta_trigger('authorities');
+CALL add_delete_meta('authorities');
+CALL add_audit_log_trigger('authorities', 'conf', audit_meta_fields() || audit_delete_fields());
 
-CREATE UNIQUE INDEX organization_code_uniqueness ON organizations (tenant_id, code);
--- end::organization[]
+CREATE UNIQUE INDEX authority_code_uniqueness ON authorities (tenant_id, code);
+-- end::authorities[]
 
 
 -- tag::operators[]
 CREATE TABLE IF NOT EXISTS operators (
     id                   SERIAL NOT NULL PRIMARY KEY,
-    organization_id      INT    NOT NULL REFERENCES organizations(id),
+    authority_id         INT    NOT NULL REFERENCES authorities(id),
     parent_id            INT             REFERENCES operators(id),
     code                 TEXT   NOT NULL,
     deactivation_date    TIMESTAMP WITH TIME ZONE,

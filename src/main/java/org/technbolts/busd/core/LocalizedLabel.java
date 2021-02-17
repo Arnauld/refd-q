@@ -9,4 +9,8 @@ public class LocalizedLabel {
     public LocalizedLabel(Map<String, String> raw) {
         this.raw = new HashMap<>(raw);
     }
+
+    public Map<String, Object> asMapOfObject() {
+        return new HashMap<>(raw);
+    }
 }
