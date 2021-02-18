@@ -4,22 +4,26 @@ import io.smallrye.mutiny.Uni;
 import io.vertx.mutiny.sqlclient.Row;
 import io.vertx.mutiny.sqlclient.Tuple;
 import org.jboss.logging.Logger;
-import org.technbolts.busd.core.*;
+import org.technbolts.busd.core.ExecutionContext;
 import org.technbolts.busd.core.organizations.*;
-import org.technbolts.busd.core.tenants.Tenant;
 import org.technbolts.busd.infra.graphql.QueryContext;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-
 import java.time.ZoneOffset;
 
 import static java.util.Arrays.asList;
 import static org.technbolts.busd.core.ImageId.imageIdOrNull;
 import static org.technbolts.busd.core.organizations.AuthorityId.authorityId;
 import static org.technbolts.busd.core.organizations.OperatorId.operatorId;
-import static org.technbolts.busd.core.tenants.TenantId.tenantId;
-import static org.technbolts.busd.infra.db.DbHelpers.*;
+import static org.technbolts.busd.infra.db.DbHelpers.toAddress;
+import static org.technbolts.busd.infra.db.DbHelpers.toAddressPgType;
+import static org.technbolts.busd.infra.db.DbHelpers.toInstant;
+import static org.technbolts.busd.infra.db.DbHelpers.toJson;
+import static org.technbolts.busd.infra.db.DbHelpers.toKeyValues;
+import static org.technbolts.busd.infra.db.DbHelpers.toLocalizedLabel;
 
+@ApplicationScoped
 public class PgPoolsOrganizations implements Organizations {
 
     private static final Logger LOG = Logger.getLogger(PgPoolsOrganizations.class);
@@ -159,13 +163,25 @@ public class PgPoolsOrganizations implements Organizations {
         );
     }
 
-    private Tenant toTenant(Row row) {
-        return new Tenant(
-                tenantId(row.getInteger("id")),
+    private Operator toOperator(Row row) {
+        return new Operator(
+                toOperatorId(row, "id"),
+                toAuthorityId(row, "authority_id"),
                 row.getString("code"),
-                row.getString("name"),
-                toInstant(row.getOffsetDateTime("created_at")));
+                toInstant(row.getOffsetDateTime("deactivation_date")),
+                toLocalizedLabel(row, "label"),
+                row.getString("legal_name"),
+                imageIdOrNull(row.getInteger("logo_id")),
+                row.getString("capital_amount"),
+                row.getString("registration_number"),
+                row.getString("vat_number"),
+                toAddress(row, "head_office_address"),
+                toAddress(row, "postal_address"),
+                row.getString("phone_number"),
+                row.getString("web_site"),
+                row.getString("contact_email"),
+                toKeyValues(row, "social_networks")
+        );
     }
-
 
 }

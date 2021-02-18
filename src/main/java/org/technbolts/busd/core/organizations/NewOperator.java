@@ -24,7 +24,21 @@ public class NewOperator {
     private final String contactEmail;
     private final KeyValues socialNetworks;
 
-    public NewOperator(AuthorityId authorityId, OperatorId parentId, String code, Instant deactivationDate, LocalizedLabel label, String legalName, String capitalAmount, String registrationNumber, String vatNumber, Address headOfficeAddress, Address postalAddress, String phoneNumber, String webSite, String contactEmail, KeyValues socialNetworks) {
+    public NewOperator(AuthorityId authorityId,
+                       OperatorId parentId,
+                       String code,
+                       Instant deactivationDate,
+                       LocalizedLabel label,
+                       String legalName,
+                       String capitalAmount,
+                       String registrationNumber,
+                       String vatNumber,
+                       Address headOfficeAddress,
+                       Address postalAddress,
+                       String phoneNumber,
+                       String webSite,
+                       String contactEmail,
+                       KeyValues socialNetworks) {
         this.authorityId = authorityId;
         this.parentId = parentId;
         this.code = code;

@@ -5,8 +5,13 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.mutiny.sqlclient.Row;
 import io.vertx.mutiny.sqlclient.RowIterator;
 import io.vertx.mutiny.sqlclient.RowSet;
+import io.vertx.mutiny.sqlclient.Tuple;
 import org.jboss.logging.Logger;
-import org.technbolts.busd.core.*;
+import org.technbolts.busd.core.Address;
+import org.technbolts.busd.core.AuditMeta;
+import org.technbolts.busd.core.Caller;
+import org.technbolts.busd.core.KeyValues;
+import org.technbolts.busd.core.LocalizedLabel;
 
 import java.time.Instant;
 import java.time.OffsetDateTime;
@@ -87,11 +92,15 @@ public class DbHelpers {
         return m;
     }
 
-    public static JsonObject toJson(LocalizedLabel label) {
+    public static Object toJson(LocalizedLabel label) {
+        if (label == null)
+            return Tuple.JSON_NULL;
         return new JsonObject(label.asMapOfObject());
     }
 
-    public static JsonObject toJson(KeyValues kvs) {
+    public static Object toJson(KeyValues kvs) {
+        if (kvs == null)
+            return Tuple.JSON_NULL;
         return new JsonObject(kvs.asMapOfObject());
     }
 
