@@ -3,7 +3,6 @@ package org.technbolts.busd.infra.db;
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import io.vertx.mutiny.sqlclient.Row;
-import io.vertx.mutiny.sqlclient.RowSet;
 import io.vertx.mutiny.sqlclient.Tuple;
 import org.jboss.logging.Logger;
 import org.technbolts.busd.core.ExecutionContext;
@@ -16,8 +15,10 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.time.Instant;
 import java.time.OffsetDateTime;
+import java.util.List;
 
 import static org.technbolts.busd.core.tenants.TenantId.tenantId;
+import static org.technbolts.busd.infra.db.DbHelpers.rowSetToListUsing;
 
 @ApplicationScoped
 public class PgPoolTenants implements Tenants {
@@ -37,7 +38,31 @@ public class PgPoolTenants implements Tenants {
                         .execute()
                         .onItem().transformToMulti(set -> Multi.createFrom().iterable(set))
                         .onItem().transform(this::toTenant)
+                        .onItem().transform(t -> {
+                            LOG.infof("Found tenant %s", t);
+                            return t;
+                })
         );
+    }
+
+    @Override
+    public Uni<List<Tenant>> all(ExecutionContext context) {
+        return pgPool.withConnectionUni(context, conn ->
+                conn.query("select * from tenants")
+                        .execute()
+                        .map(rowSetToListUsing(this::toTenant))
+        );
+    }
+
+    @Override
+    public Uni<Tenant> findById(ExecutionContext context, TenantId id) {
+        String sql = "select * from tenants where id = $1";
+        Tuple args = Tuple.of(id.raw());
+        return pgPool.withConnectionUni(context, conn ->
+                conn.preparedQuery(sql)
+                        .execute(args)
+                        .onItem().transformToUni(DbHelpers::singleResult)
+                        .map(this::toTenant));
     }
 
     @Override
@@ -68,8 +93,7 @@ public class PgPoolTenants implements Tenants {
         return new Tenant(
                 tenantId(row.getInteger("id")),
                 row.getString("code"),
-                row.getString("name"),
-                toInstant(row.getOffsetDateTime("created_at")));
+                row.getString("name"));
     }
 
     private static Instant toInstant(OffsetDateTime dateTime) {

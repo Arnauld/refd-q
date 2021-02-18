@@ -27,8 +27,9 @@ public class AuthDirective implements SchemaDirectiveWiring {
         // build a data fetcher that first checks authorisation roles before then calling the original data fetcher
         DataFetcher<?> authDataFetcher = DataFetcherFactories.wrapDataFetcher(originalFetcher, (dataFetchingEnvironment, value) -> {
             QueryContext context = dataFetchingEnvironment.getContext();
-            LOG.infof("Checking auth(%s) on field '%s'", permission, field.getName());
-            if (context.hasPermission(permission)) {
+            final boolean hasPermission = context.hasPermission(permission);
+            LOG.infof("Checking auth(%s) on field '%s': %s", permission, field.getName(), hasPermission);
+            if (hasPermission) {
                 return value;
             } else {
                 return null;

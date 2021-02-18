@@ -12,11 +12,16 @@ import org.technbolts.busd.core.AuditMeta;
 import org.technbolts.busd.core.Caller;
 import org.technbolts.busd.core.KeyValues;
 import org.technbolts.busd.core.LocalizedLabel;
+import org.technbolts.busd.core.tenants.Tenant;
 
 import java.time.Instant;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * @author <a href="http://twitter.com/aloyer">@aloyer</a>
@@ -39,13 +44,19 @@ public class DbHelpers {
     }
 
     public static AuditMeta toAuditMeta(Row row) {
-        Caller createdBy = Caller.caller(row.getString("created_by"), Caller.Type.valueOf(row.getString("created_by_type")));
-        Caller updatedBy = Caller.caller(row.getString("updated_by"), Caller.Type.valueOf(row.getString("updated_by_type")));
         return new AuditMeta(
-                toInstant(row.getOffsetDateTime("created_at")),
-                createdBy,
-                toInstant(row.getOffsetDateTime("updated_at")),
-                updatedBy);
+                toInstant(row, "created_at"),
+                caller(row, "created_by", "created_by_type"),
+                toInstant(row, "updated_at"),
+                caller(row, "updated_by", "updated_by_type"));
+    }
+
+    private static Instant toInstant(Row row, String columnName) {
+        return toInstant(row.getOffsetDateTime(columnName));
+    }
+
+    private static Caller caller(Row row, String created_by, String created_by_type) {
+        return Caller.caller(row.getString(created_by), Caller.Type.valueOf(row.getString(created_by_type)));
     }
 
     public static String toAddressPgType(Address address) {
@@ -104,4 +115,19 @@ public class DbHelpers {
         return new JsonObject(kvs.asMapOfObject());
     }
 
+    public static <T, R> List<T> toList(RowSet<R> rs, Function<R, T> func) {
+        List<T> ts = new ArrayList<>();
+        for (R r : rs) {
+            ts.add(func.apply(r));
+        }
+        return ts;
+    }
+
+    public static <T, R> Function<RowSet<T>, List<R>> rowSetToListUsing(Function<T, R> mapper) {
+        return rs -> DbHelpers.toList(rs, mapper);
+    }
+
+    public static <T,R> Function<List<T>, List<R>> listUsing(Function<T,R> mapper) {
+        return ls -> ls.stream().map(mapper).collect(Collectors.toList());
+    }
 }

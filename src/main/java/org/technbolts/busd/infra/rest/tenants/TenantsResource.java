@@ -73,8 +73,7 @@ public class TenantsResource {
     private TenantDTO toDTO(Tenant tenant) {
         return new TenantDTO(
                 tenant.id().raw(),
-                tenant.name(),
-                toEpochMilli(tenant.createdAt()));
+                tenant.name());
     }
 
     private static Long toEpochMilli(Instant instant) {

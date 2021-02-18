@@ -57,6 +57,7 @@ public class QueryContext implements ExecutionContext {
             return Optional.of(Caller.caller(xCallerId, Caller.Type.valueOf(xCallerType)));
         } catch (IllegalArgumentException iae) {
             LOG.warnf("Invalid caller type format '%s', must be one of %s", xCallerType, asList(Caller.Type.values()));
+            // EMPTY or throw Exception
             return Optional.empty();
         }
     }
@@ -69,6 +70,7 @@ public class QueryContext implements ExecutionContext {
             return Optional.of(TenantId.tenantId(raw));
         } catch (NumberFormatException nfe) {
             LOG.warnf("Invalid tenantId format '%s'", xTenantId);
+            // EMPTY or throw Exception
             return Optional.empty();
         }
     }

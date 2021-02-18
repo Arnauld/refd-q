@@ -13,13 +13,17 @@ type Tenant {
     code: String!
 
     """
-    Descriptive Label
+    Descriptive name
     """
-    label: String!
+    name: String!
 }
 
-type Tenants{
-    tenants: [Tenant!]!
+type TenantEdge {
+    node: Tenant
+}
+
+type TenantsConnection {
+    edges: [TenantEdge]!
 }
 
 """
@@ -32,18 +36,23 @@ input CreateTenantInput {
     code: String!
 
     """
-    Descriptive Label
+    Descriptive name
     """
-    label: String!
+    name: String!
 }
 
 """
 Result of the Tenant creation
 """
-union CreateTenantPayload = Tenant|Error
+union CreateTenantPayload = Tenant | Error
+
+"""
+Result of tenants query
+"""
+union TenantsPayload = TenantsConnection | Error
 
 type Query {
-    tenants(globPattern: String): Tenants @auth(permission:TENANT_READ)
+    tenants(globPattern: String): TenantsPayload @auth(permission:TENANT_READ)
 }
 
 type Mutation {
