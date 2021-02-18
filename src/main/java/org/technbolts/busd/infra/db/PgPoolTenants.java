@@ -5,7 +5,9 @@ import io.smallrye.mutiny.Uni;
 import io.vertx.mutiny.sqlclient.Row;
 import io.vertx.mutiny.sqlclient.Tuple;
 import org.jboss.logging.Logger;
+import org.technbolts.busd.core.ErrorCode;
 import org.technbolts.busd.core.ExecutionContext;
+import org.technbolts.busd.core.RefdException;
 import org.technbolts.busd.core.tenants.NewTenant;
 import org.technbolts.busd.core.tenants.Tenant;
 import org.technbolts.busd.core.tenants.TenantId;
@@ -15,6 +17,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.time.Instant;
 import java.time.OffsetDateTime;
+import java.util.Collections;
 import java.util.List;
 
 import static org.technbolts.busd.core.tenants.TenantId.tenantId;
@@ -39,8 +42,8 @@ public class PgPoolTenants implements Tenants {
                         .onItem().transformToMulti(set -> Multi.createFrom().iterable(set))
                         .onItem().transform(this::toTenant)
                         .onItem().transform(t -> {
-                            LOG.infof("Found tenant %s", t);
-                            return t;
+                    LOG.infof("Found tenant %s", t);
+                    return t;
                 })
         );
     }
@@ -82,7 +85,11 @@ public class PgPoolTenants implements Tenants {
                         .execute(args)
                         .onItem().transformToUni(DbHelpers::singleResult)
                         .map(this::toTenantId)
-        );
+                        .onFailure().transform(e -> {
+                            LOG.warnf(e, "Failed to create tenant (%s, %s)", newTenant.name(), newTenant.code());
+                            return new RefdException(ErrorCode.BAD_REQUEST, "Oops", Collections.emptyMap());
+                        }
+                ));
     }
 
     private TenantId toTenantId(Row row) {

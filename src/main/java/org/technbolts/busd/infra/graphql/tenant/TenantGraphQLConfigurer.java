@@ -4,14 +4,12 @@ import graphql.schema.DataFetcher;
 import graphql.schema.idl.RuntimeWiring;
 import graphql.schema.idl.TypeRuntimeWiring;
 import org.jboss.logging.Logger;
-import org.technbolts.busd.core.organizations.NewAuthority;
 import org.technbolts.busd.core.tenants.NewTenant;
 import org.technbolts.busd.core.tenants.Tenant;
 import org.technbolts.busd.core.tenants.Tenants;
-import org.technbolts.busd.infra.db.DbHelpers;
 import org.technbolts.busd.infra.graphql.ConnectionGQL;
 import org.technbolts.busd.infra.graphql.GraphQLConfigurer;
-import org.technbolts.busd.infra.graphql.PayloadErrorResolver;
+import org.technbolts.busd.infra.graphql.Mappers;
 import org.technbolts.busd.infra.graphql.QueryContext;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -22,7 +20,7 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
-import static org.technbolts.busd.infra.db.DbHelpers.listUsing;
+import static org.technbolts.busd.infra.graphql.Mappers.toConnectionGQLUsing;
 import static org.technbolts.busd.infra.graphql.PayloadErrorResolver.payloadErrorResolver;
 
 @ApplicationScoped
@@ -64,6 +62,7 @@ public class TenantGraphQLConfigurer implements GraphQLConfigurer {
                             .flatMap(id -> tenants.findById(context, id))
                             .map(this::toTenantGQL)
                             .map(o -> (Object) o)
+                            .onFailure().recoverWithItem(Mappers::toError)
                             .subscribeAsCompletionStage();
                 });
     }
@@ -80,23 +79,13 @@ public class TenantGraphQLConfigurer implements GraphQLConfigurer {
             QueryContext context = env.getContext();
             LOG.infof("Querying tenants using glob '%s'", glob);
             return tenants.all(context)
-                    .map(toConnectionUsing(this::toTenantGQL))
+                    .map(toConnectionGQLUsing(this::toTenantGQL))
                     .map(ls -> {
                         LOG.infof("Querying tenants using glob '%s': %s", glob, ls);
                         return ls;
                     })
                     .subscribe().asCompletionStage();
         });
-    }
-
-    private <R, T> Function<List<R>, ConnectionGQL<T>> toConnectionUsing(Function<R, T> mapper) {
-        return ls -> {
-            ConnectionGQL<T> connectionGQL = new ConnectionGQL<>();
-            for (R r : ls) {
-                connectionGQL.append(mapper.apply(r));
-            }
-            return connectionGQL;
-        };
     }
 
     private TenantGQL toTenantGQL(Tenant tenant) {

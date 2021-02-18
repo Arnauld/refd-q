@@ -136,6 +136,7 @@ interface HasAuditMeta {
 Error Code
 """
 enum ErrorCode {
+    SERVER_ERROR,
     NOT_FOUND,
     UNAUTHORIZED,
     BAD_REQUEST

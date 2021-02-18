@@ -24,13 +24,13 @@ import static org.technbolts.busd.infra.db.DbHelpers.toKeyValues;
 import static org.technbolts.busd.infra.db.DbHelpers.toLocalizedLabel;
 
 @ApplicationScoped
-public class PgPoolsOrganizations implements Organizations {
+public class PgPoolOrganizations implements Organizations {
 
-    private static final Logger LOG = Logger.getLogger(PgPoolsOrganizations.class);
+    private static final Logger LOG = Logger.getLogger(PgPoolOrganizations.class);
     private final ContextualizedPgPool pgPool;
 
     @Inject
-    public PgPoolsOrganizations(ContextualizedPgPool pgPool) {
+    public PgPoolOrganizations(ContextualizedPgPool pgPool) {
         this.pgPool = pgPool;
     }
 

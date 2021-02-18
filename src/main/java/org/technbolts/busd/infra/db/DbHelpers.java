@@ -127,7 +127,7 @@ public class DbHelpers {
         return rs -> DbHelpers.toList(rs, mapper);
     }
 
-    public static <T,R> Function<List<T>, List<R>> listUsing(Function<T,R> mapper) {
+    public static <T, R> Function<List<T>, List<R>> listUsing(Function<T, R> mapper) {
         return ls -> ls.stream().map(mapper).collect(Collectors.toList());
     }
 }
