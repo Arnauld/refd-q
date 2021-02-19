@@ -11,6 +11,7 @@ import org.technbolts.busd.core.organizations.NewAuthority;
 import org.technbolts.busd.core.organizations.Operator;
 import org.technbolts.busd.core.organizations.Organizations;
 import org.technbolts.busd.infra.graphql.GraphQLConfigurer;
+import org.technbolts.busd.infra.graphql.Mappers;
 import org.technbolts.busd.infra.graphql.QueryContext;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -85,6 +86,7 @@ public class OrganizationGraphQLConfigurer implements GraphQLConfigurer {
                             .flatMap(id -> organizations.findAuthorityById(context, id))
                             .map(this::toAuthorityGQL)
                             .map(o -> (Object) o)
+                            .onFailure().recoverWithItem(Mappers::toError)
                             .subscribeAsCompletionStage();
                 });
     }

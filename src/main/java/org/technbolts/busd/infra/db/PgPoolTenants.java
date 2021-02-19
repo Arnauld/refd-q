@@ -15,10 +15,9 @@ import org.technbolts.busd.core.tenants.Tenants;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import java.time.Instant;
-import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static org.technbolts.busd.core.tenants.TenantId.tenantId;
 import static org.technbolts.busd.infra.db.DbHelpers.rowSetToListUsing;
@@ -85,11 +84,18 @@ public class PgPoolTenants implements Tenants {
                         .execute(args)
                         .onItem().transformToUni(DbHelpers::singleResult)
                         .map(this::toTenantId)
-                        .onFailure().transform(e -> {
-                            LOG.warnf(e, "Failed to create tenant (%s, %s)", newTenant.name(), newTenant.code());
-                            return new RefdException(ErrorCode.BAD_REQUEST, "Oops", Collections.emptyMap());
-                        }
-                ));
+                        .onFailure().transform(e -> handleNewTenantError(e, newTenant)));
+    }
+
+    private Throwable handleNewTenantError(Throwable e, NewTenant newTenant) {
+        if (DbHelpers.isUniqueConstraintViolation(e, "tenants_code_key")) {
+            return new RefdException(ErrorCode.UNIQUE_VIOLATION, "Oops", Map.of("property", "code"));
+        }
+        if (DbHelpers.isUniqueConstraintViolation(e, "tenants_name_key")) {
+            return new RefdException(ErrorCode.UNIQUE_VIOLATION, "Oops", Map.of("property", "name"));
+        }
+        LOG.warnf(e, "Failed to create tenant (%s, %s)", newTenant.code(), newTenant.name());
+        return new RefdException(ErrorCode.BAD_REQUEST, "Oops", Collections.emptyMap());
     }
 
     private TenantId toTenantId(Row row) {
@@ -103,9 +109,4 @@ public class PgPoolTenants implements Tenants {
                 row.getString("name"));
     }
 
-    private static Instant toInstant(OffsetDateTime dateTime) {
-        if (dateTime == null)
-            return null;
-        return dateTime.toInstant();
-    }
 }

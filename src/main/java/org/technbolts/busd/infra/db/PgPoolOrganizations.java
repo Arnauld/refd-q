@@ -4,13 +4,18 @@ import io.smallrye.mutiny.Uni;
 import io.vertx.mutiny.sqlclient.Row;
 import io.vertx.mutiny.sqlclient.Tuple;
 import org.jboss.logging.Logger;
+import org.technbolts.busd.core.ErrorCode;
 import org.technbolts.busd.core.ExecutionContext;
+import org.technbolts.busd.core.RefdException;
 import org.technbolts.busd.core.organizations.*;
+import org.technbolts.busd.core.tenants.NewTenant;
 import org.technbolts.busd.infra.graphql.QueryContext;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.time.ZoneOffset;
+import java.util.Collections;
+import java.util.Map;
 
 import static java.util.Arrays.asList;
 import static org.technbolts.busd.core.ImageId.imageIdOrNull;
@@ -79,7 +84,16 @@ public class PgPoolOrganizations implements Organizations {
                         .execute(args)
                         .onItem().transformToUni(DbHelpers::singleResult)
                         .map(row -> toAuthorityId(row, "id"))
+                        .onFailure().transform(e -> handleNewAuthorityError(e, newAuthority))
         );
+    }
+
+    private Throwable handleNewAuthorityError(Throwable e, NewAuthority newAuthority) {
+        if (DbHelpers.isUniqueConstraintViolation(e, "operator_code_uniqueness")) {
+            return new RefdException(ErrorCode.UNIQUE_VIOLATION, "Oops", Map.of("property", "code"));
+        }
+        LOG.warnf(e, "Failed to create authority (%s, %s)", newAuthority.code(), newAuthority.label());
+        return new RefdException(ErrorCode.BAD_REQUEST, "Oops", Collections.emptyMap());
     }
 
     @Override

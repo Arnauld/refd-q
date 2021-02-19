@@ -105,6 +105,10 @@ enum CallerType {
 }
 
 interface HasAuditMeta {
+    audit:AuditMeta
+}
+
+type AuditMeta {
     """
     Creation timestamp since epoch in millis
     """
@@ -139,7 +143,9 @@ enum ErrorCode {
     SERVER_ERROR,
     NOT_FOUND,
     UNAUTHORIZED,
-    BAD_REQUEST
+    BAD_REQUEST,
+    #
+    UNIQUE_VIOLATION
 }
 
 """

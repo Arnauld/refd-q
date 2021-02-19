@@ -6,13 +6,13 @@ import io.vertx.mutiny.sqlclient.Row;
 import io.vertx.mutiny.sqlclient.RowIterator;
 import io.vertx.mutiny.sqlclient.RowSet;
 import io.vertx.mutiny.sqlclient.Tuple;
+import io.vertx.pgclient.PgException;
 import org.jboss.logging.Logger;
 import org.technbolts.busd.core.Address;
 import org.technbolts.busd.core.AuditMeta;
 import org.technbolts.busd.core.Caller;
 import org.technbolts.busd.core.KeyValues;
 import org.technbolts.busd.core.LocalizedLabel;
-import org.technbolts.busd.core.tenants.Tenant;
 
 import java.time.Instant;
 import java.time.OffsetDateTime;
@@ -92,7 +92,11 @@ public class DbHelpers {
 
     private static Map<String, String> toMapOfStringString(Row row, String columnName) {
         final int columnIndex = row.getColumnIndex(columnName);
-        JsonObject json = row.get(JsonObject.class, columnIndex);
+        Object value = row.getValue(columnIndex);
+        JsonObject json = null;
+        if (value != Tuple.JSON_NULL) {
+            json = (JsonObject) value;
+        }
 
         Map<String, String> m = new HashMap<>();
         if (json != null) {
@@ -129,5 +133,16 @@ public class DbHelpers {
 
     public static <T, R> Function<List<T>, List<R>> listUsing(Function<T, R> mapper) {
         return ls -> ls.stream().map(mapper).collect(Collectors.toList());
+    }
+
+    public static boolean isUniqueConstraintViolation(Throwable e, String constraintName) {
+        if (e instanceof PgException) {
+            PgException pge = (PgException) e;
+            // https://www.postgresql.org/docs/12/errcodes-appendix.html
+            if (pge.getCode().equalsIgnoreCase("23505")) {
+                return pge.getMessage().contains(constraintName);
+            }
+        }
+        return false;
     }
 }

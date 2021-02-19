@@ -1,8 +1,8 @@
-package org.technbolts.busd.infra.graphql.conf;
+package org.technbolts.busd.infra.graphql;
 
 import org.technbolts.busd.core.ErrorCode;
+import org.technbolts.busd.infra.graphql.conf.PropertyGQL;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -17,5 +17,14 @@ public class ErrorGQL {
         this.code = code;
         this.message = message;
         this.args = args;
+    }
+
+    @Override
+    public String toString() {
+        return "ErrorGQL{" +
+                "code=" + code +
+                ", message='" + message + '\'' +
+                ", args=" + args +
+                '}';
     }
 }

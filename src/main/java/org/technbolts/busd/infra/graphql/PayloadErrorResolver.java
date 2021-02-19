@@ -3,7 +3,6 @@ package org.technbolts.busd.infra.graphql;
 import graphql.schema.TypeResolver;
 import graphql.schema.idl.RuntimeWiring;
 import org.jboss.logging.Logger;
-import org.technbolts.busd.infra.graphql.conf.ErrorGQL;
 
 public class PayloadErrorResolver implements GraphQLConfigurer {
     private static final Logger LOG = Logger.getLogger(PayloadErrorResolver.class);
