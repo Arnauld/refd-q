@@ -3,6 +3,7 @@ package org.technbolts.busd.infra.graphql.conf;
 import graphql.schema.DataFetcher;
 import graphql.schema.idl.RuntimeWiring;
 import graphql.schema.idl.TypeRuntimeWiring;
+import org.jboss.logging.Logger;
 import org.technbolts.busd.core.Address;
 import org.technbolts.busd.core.KeyValues;
 import org.technbolts.busd.core.LocalizedLabel;
@@ -28,6 +29,7 @@ import static org.technbolts.busd.infra.graphql.PayloadErrorResolver.payloadErro
 @ApplicationScoped
 public class OrganizationGraphQLConfigurer implements GraphQLConfigurer {
 
+    private static final Logger LOG = Logger.getLogger(OrganizationGraphQLConfigurer.class);
     private final Organizations organizations;
 
     @Inject
@@ -83,7 +85,10 @@ public class OrganizationGraphQLConfigurer implements GraphQLConfigurer {
                     NewAuthority newAuthority = toNewAuthority(input);
                     QueryContext context = env.getContext();
                     return organizations.createAuthority(context, newAuthority)
-                            .flatMap(id -> organizations.findAuthorityById(context, id))
+                            .flatMap(id -> {
+                                LOG.infof("Authority created with id %s", id);
+                                return organizations.findAuthorityById(context, id);
+                            })
                             .map(this::toAuthorityGQL)
                             .map(o -> (Object) o)
                             .onFailure().recoverWithItem(Mappers::toError)
@@ -139,9 +144,8 @@ public class OrganizationGraphQLConfigurer implements GraphQLConfigurer {
         return new LocalizedLabel(raw);
     }
 
-    private AuthorityGQL toAuthorityGQL(Authority oql) {
-        AuthorityGQL gql = new AuthorityGQL();
-        return gql;
+    private AuthorityGQL toAuthorityGQL(Authority authority) {
+        return new AuthorityGQL(authority);
     }
 
     private OperatorGQL toOperatorGQL(Operator oql) {

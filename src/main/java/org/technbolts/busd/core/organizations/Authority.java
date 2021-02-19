@@ -6,7 +6,7 @@ import org.technbolts.busd.core.KeyValues;
 import org.technbolts.busd.core.LocalizedLabel;
 
 public class Authority {
-    private final AuthorityId authorityId;
+    private final AuthorityId id;
     private final String code;
     private final LocalizedLabel label;
     private final String legalName;
@@ -17,7 +17,7 @@ public class Authority {
     private final String contactEmail;
     private final KeyValues socialNetworks;
 
-    public Authority(AuthorityId authorityId,
+    public Authority(AuthorityId id,
                      String code,
                      LocalizedLabel label,
                      String legalName,
@@ -27,7 +27,7 @@ public class Authority {
                      String webSite,
                      String contactEmail,
                      KeyValues socialNetworks) {
-        this.authorityId = authorityId;
+        this.id = id;
         this.code = code;
         this.label = label;
         this.legalName = legalName;
@@ -39,8 +39,8 @@ public class Authority {
         this.socialNetworks = socialNetworks;
     }
 
-    public AuthorityId authorityId() {
-        return authorityId;
+    public AuthorityId id() {
+        return id;
     }
 
     public String code() {

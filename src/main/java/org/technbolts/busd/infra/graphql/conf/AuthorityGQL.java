@@ -1,4 +1,18 @@
 package org.technbolts.busd.infra.graphql.conf;
 
-public class AuthorityGQL {
+import org.technbolts.busd.core.organizations.Authority;
+import org.technbolts.busd.infra.graphql.Adapter;
+
+public class AuthorityGQL extends Adapter<Authority> {
+    public final int id;
+    public final String code;
+    public final String timezone;
+
+    public AuthorityGQL(Authority authority) {
+        super(authority);
+        this.id = authority.id().raw();
+        this.code = authority.code();
+        this.timezone = "TODO";
+    }
+
 }

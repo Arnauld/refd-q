@@ -89,7 +89,7 @@ public class PgPoolOrganizations implements Organizations {
     }
 
     private Throwable handleNewAuthorityError(Throwable e, NewAuthority newAuthority) {
-        if (DbHelpers.isUniqueConstraintViolation(e, "operator_code_uniqueness")) {
+        if (DbHelpers.isUniqueConstraintViolation(e, "authority_code_uniqueness")) {
             return new RefdException(ErrorCode.UNIQUE_VIOLATION, "Oops", Map.of("property", "code"));
         }
         LOG.warnf(e, "Failed to create authority (%s, %s)", newAuthority.code(), newAuthority.label());
