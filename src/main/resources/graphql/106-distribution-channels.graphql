@@ -11,5 +11,5 @@ type DistributionChannel {
     id: Int!
     code: String!
     label: String!
-    supportedPaymentModes: [PaymentMode]
+    paymentModes: [PaymentMode!]!
 }

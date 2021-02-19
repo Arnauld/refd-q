@@ -12,7 +12,15 @@ public class AuthorityGQL extends Adapter<Authority> {
         super(authority);
         this.id = authority.id().raw();
         this.code = authority.code();
-        this.timezone = "TODO";
+        this.timezone = authority.timezone();
     }
 
+    @Override
+    public String toString() {
+        return "AuthorityGQL{" +
+                "id=" + id +
+                ", code='" + code + '\'' +
+                ", tz='" + timezone + '\'' +
+                '}';
+    }
 }

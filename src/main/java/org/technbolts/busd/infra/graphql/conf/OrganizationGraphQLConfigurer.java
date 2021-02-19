@@ -103,6 +103,7 @@ public class OrganizationGraphQLConfigurer implements GraphQLConfigurer {
                 code,
                 toLocalizedLabel((List<Map<String, String>>) input.get("label")),
                 legalName,
+                (String) input.get("timezone"),
                 toAddress((Map<String, Object>) input.get("postalAddress")),
                 (String) input.get("phoneNumber"),
                 (String) input.get("webSite"),

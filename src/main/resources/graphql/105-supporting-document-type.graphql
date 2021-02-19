@@ -6,8 +6,8 @@ enum SupportingDocumentValidationMode {
 type SupportingDocumentType {
     id: Int!
     code: String!
-    shortLabel: [LocalizedLabel]
-    longLabel: [LocalizedLabel]
-    description: [LocalizedLabel]
-    validationModes: [SupportingDocumentValidationMode]
+    label: [LocalizedLabel!]!
+    shortLabel: [LocalizedLabel!]!
+    description: [LocalizedLabel!]!
+    validationModes: [SupportingDocumentValidationMode!]!
 }

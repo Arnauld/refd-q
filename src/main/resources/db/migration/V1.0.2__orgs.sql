@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS authorities (
     code                 TEXT   NOT NULL,
     label                JSONB  NOT NULL,
     legal_name           TEXT   NOT NULL,
+    timezone             TEXT   NOT NULL,
     logo_id              INT REFERENCES images(id),
     postal_address       address_type,
     phone_number         TEXT,

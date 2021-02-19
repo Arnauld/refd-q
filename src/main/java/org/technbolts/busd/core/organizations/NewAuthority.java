@@ -8,6 +8,7 @@ public class NewAuthority {
     private final String code;
     private final LocalizedLabel label;
     private final String legalName;
+    private final String timezone;
     private final Address postalAddress;
     private final String phoneNumber;
     private final String webSite;
@@ -17,6 +18,7 @@ public class NewAuthority {
     public NewAuthority(String code,
                         LocalizedLabel label,
                         String legalName,
+                        String timezone,
                         Address postalAddress,
                         String phoneNumber,
                         String webSite,
@@ -25,6 +27,7 @@ public class NewAuthority {
         this.code = code;
         this.label = label;
         this.legalName = legalName;
+        this.timezone = timezone;
         this.postalAddress = postalAddress;
         this.phoneNumber = phoneNumber;
         this.webSite = webSite;
@@ -62,5 +65,9 @@ public class NewAuthority {
 
     public KeyValues socialNetworks() {
         return socialNetworks;
+    }
+
+    public String timezone() {
+        return timezone;
     }
 }

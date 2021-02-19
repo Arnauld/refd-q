@@ -8,7 +8,6 @@ import org.technbolts.busd.core.ErrorCode;
 import org.technbolts.busd.core.ExecutionContext;
 import org.technbolts.busd.core.RefdException;
 import org.technbolts.busd.core.organizations.*;
-import org.technbolts.busd.core.tenants.NewTenant;
 import org.technbolts.busd.infra.graphql.QueryContext;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -21,12 +20,7 @@ import static java.util.Arrays.asList;
 import static org.technbolts.busd.core.ImageId.imageIdOrNull;
 import static org.technbolts.busd.core.organizations.AuthorityId.authorityId;
 import static org.technbolts.busd.core.organizations.OperatorId.operatorId;
-import static org.technbolts.busd.infra.db.DbHelpers.toAddress;
-import static org.technbolts.busd.infra.db.DbHelpers.toAddressPgType;
-import static org.technbolts.busd.infra.db.DbHelpers.toInstant;
-import static org.technbolts.busd.infra.db.DbHelpers.toJson;
-import static org.technbolts.busd.infra.db.DbHelpers.toKeyValues;
-import static org.technbolts.busd.infra.db.DbHelpers.toLocalizedLabel;
+import static org.technbolts.busd.infra.db.DbHelpers.*;
 
 @ApplicationScoped
 public class PgPoolOrganizations implements Organizations {
@@ -67,12 +61,22 @@ public class PgPoolOrganizations implements Organizations {
     public Uni<AuthorityId> createAuthority(ExecutionContext context, NewAuthority newAuthority) {
         String sql = "" +
                 "insert into authorities " +
-                "(code, label, legal_name, postal_address, phone_number, web_site, contact_email, social_networks) " +
-                "values ($1, $2, $3, $4, $5, $6, $7, $8) returning id";
+                "(code," +
+                " label," +
+                " legal_name," +
+                " timezone," +
+                " postal_address," +
+                " phone_number," +
+                " web_site," +
+                " contact_email," +
+                " social_networks) " +
+                "values " +
+                "($1, $2, $3, $4, $5, $6, $7, $8, $9) returning id";
         Tuple args = Tuple.tuple(asList(
                 newAuthority.code(),
                 toJson(newAuthority.label()),
                 newAuthority.legalName(),
+                newAuthority.timezone(),
                 newAuthority.postalAddress(),
                 newAuthority.phoneNumber(),
                 newAuthority.webSite(),
@@ -127,7 +131,8 @@ public class PgPoolOrganizations implements Organizations {
                 " web_site, " +
                 " contact_email, " +
                 " social_networks) " +
-                " values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)" +
+                " values " +
+                " ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)" +
                 " returning id";
         Tuple args = Tuple.tuple(asList(
                 newOperator.authorityId().raw(),
@@ -167,6 +172,7 @@ public class PgPoolOrganizations implements Organizations {
                 toAuthorityId(row, "id"),
                 row.getString("code"),
                 toLocalizedLabel(row, "label"),
+                row.getString("timezone"),
                 row.getString("legal_name"),
                 imageIdOrNull(row.getInteger("logo_id")),
                 toAddress(row, "postal_address"),

@@ -56,5 +56,5 @@ type Query {
 }
 
 type Mutation {
-    createTenant(input: CreateTenantInput): CreateTenantPayload @auth(permission:TENANT_WRITE)
+    createTenant(input: CreateTenantInput): CreateTenantPayload @auth(permission:TENANT_CREATE)
 }

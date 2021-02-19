@@ -1,9 +1,9 @@
 type Vehicle {
-    id: Int!
-    code: String!
+    id: Int! @id
+    code: String! @unique
     label(locales:[String]): [LocalizedLabel]
     operatorId: Int
-    transportMode: Int
+    transportModeId: Int
     externalCode: String
 }
 
@@ -47,6 +47,6 @@ extend type Query {
 }
 
 extend type Mutation {
-    createVehicle(input: CreateVehicleInput): CreateVehiclePayload @auth(permission: VEHICLE_WRITE)
-    updateVehicle(input: UpdateVehicleInput): UpdateVehiclePayload @auth(permission: VEHICLE_WRITE)
+    createVehicle(input: CreateVehicleInput): CreateVehiclePayload @auth(permission: VEHICLE_CREATE)
+    updateVehicle(input: UpdateVehicleInput): UpdateVehiclePayload @auth(permission: VEHICLE_UPDATE)
 }

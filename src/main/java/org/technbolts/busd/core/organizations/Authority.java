@@ -9,6 +9,7 @@ public class Authority {
     private final AuthorityId id;
     private final String code;
     private final LocalizedLabel label;
+    private final String timezone;
     private final String legalName;
     private final ImageId logoId;
     private final Address postalAddress;
@@ -20,6 +21,7 @@ public class Authority {
     public Authority(AuthorityId id,
                      String code,
                      LocalizedLabel label,
+                     String timezone,
                      String legalName,
                      ImageId logoId,
                      Address postalAddress,
@@ -30,6 +32,7 @@ public class Authority {
         this.id = id;
         this.code = code;
         this.label = label;
+        this.timezone = timezone;
         this.legalName = legalName;
         this.logoId = logoId;
         this.postalAddress = postalAddress;
@@ -77,5 +80,9 @@ public class Authority {
 
     public KeyValues socialNetworks() {
         return socialNetworks;
+    }
+
+    public String timezone() {
+        return timezone;
     }
 }

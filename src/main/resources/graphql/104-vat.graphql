@@ -5,6 +5,7 @@ type VAT {
     """
     Float number as a String @see BigDecimal
     represents decimal floating-point numbers of arbitrary precision
+    TODO
     """
     rate: String!
 }

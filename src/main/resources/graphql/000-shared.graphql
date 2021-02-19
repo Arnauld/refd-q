@@ -5,24 +5,31 @@ enum Permission {
     #
     # ROOT permissions
     #
+    TENANT_CREATE,
     TENANT_READ,
-    TENANT_WRITE,
+    TENANT_UPDATE,
     #
     #
     AUDIT_META_READ,
     #
     #
     AUTHORITY_CREATE,
-    AUTHORITY_WRITE,
     AUTHORITY_READ,
+    AUTHORITY_UPDATE,
+    OPERATOR_CREATE,
     OPERATOR_READ,
-    OPERATOR_WRITE,
+    OPERATOR_UPDATE,
     #
+    TRANSPORT_MODE_CREATE,
     TRANSPORT_MODE_READ,
-    TRANSPORT_MODE_WRITE,
+    TRANSPORT_MODE_UPDATE,
+    VEHICLE_CREATE,
     VEHICLE_READ,
-    VEHICLE_WRITE,
+    VEHICLE_UPDATE,
 }
+
+directive @id on FIELD_DEFINITION
+directive @unique on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
 
 """
 Mark a field, query or mutation with the required permission.
@@ -113,10 +120,12 @@ type AuditMeta {
     Creation timestamp since epoch in millis
     """
     created_at: Int
+
     """
     Creator identifier
     """
     created_by: String @requires(permission:AUDIT_META_READ)
+
     """
     Creator Type
     """
@@ -126,10 +135,12 @@ type AuditMeta {
     Last update timestamp since epoch in millis
     """
     updated_at: Int
+
     """
     Last update initiator identifer
     """
     updated_by: String @requires(permission:AUDIT_META_READ)
+
     """
     Last update initiator Type
     """
@@ -144,7 +155,10 @@ enum ErrorCode {
     NOT_FOUND,
     UNAUTHORIZED,
     BAD_REQUEST,
-    #
+    """
+    Unique Constraint Violation.
+    ("property":<value>) where "value" is the property name that enfraithgnhed the constraint
+    """
     UNIQUE_VIOLATION
 }
 
