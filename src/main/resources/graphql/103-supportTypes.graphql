@@ -31,12 +31,12 @@ type SupportType {
     """
     Internal identifier of the support type
     """
-    id: Int!
+    id: Int! @id
 
     """
     Readable and unique identifier of the support type
     """
-    code: String!
+    code: String! @unique
 
     """
     Localized Label.
@@ -78,7 +78,6 @@ input UpdateSupportTypeInput {
     Internal identifier of the support type
     """
     id:Int!
-    code: String!
 
     """
     Localized label.
@@ -87,7 +86,13 @@ input UpdateSupportTypeInput {
     label: [LocalizedLabelInput!]
     holderType: HolderType
     physicalType: PhysicalType
+    """
+    If provided, the technologies will replace all existing ones.
+    """
     supportTechnologies: [SupportTechnology!]
+    """
+    If provided, the network codes will replace all existing ones.
+    """
     networkCodes: [String!]
     greenListEnabled: Boolean
 }

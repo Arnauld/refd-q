@@ -5,13 +5,13 @@ package org.technbolts.busd.core.tenants;
  */
 public class NewTenant {
     private final Integer id;
-    private final String name;
     private final String code;
+    private final String name;
 
-    public NewTenant(Integer id, String name, String code) {
+    public NewTenant(Integer id, String code, String name) {
         this.id = id;
-        this.name = name;
         this.code = code;
+        this.name = name;
     }
 
     public Integer id() {

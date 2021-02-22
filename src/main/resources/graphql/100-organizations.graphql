@@ -1,3 +1,12 @@
+type UtcOffset {
+    minutes:Int
+    hours:Int
+}
+
+extend type Query {
+    utcOffset:UtcOffset
+}
+
 type Authority {
     """
     Internal identifier of the authority
@@ -16,6 +25,7 @@ type Authority {
 
     """
     ID of the time zone which this authority operates on
+    ISO8601 : "Europe/Paris"
     """
     timezone: String!
 
@@ -37,7 +47,7 @@ type Authority {
     """
     Social networks identifiers
     e.g. ("twitter", "https://twitter.com/RATP_SmartSystM"),
-    ("linkedin","https://www.linkedin.com/company/ratpsmartsystems")
+         ("linkedin","https://www.linkedin.com/company/ratpsmartsystems")
     """
     socialNetworks: [Property!]
 }
@@ -291,9 +301,9 @@ extend type Query {
 
 extend type Mutation {
     createAuthority(input: CreateAuthorityInput): CreateAuthorityPayload @auth(permission: AUTHORITY_CREATE)
-    updateAuthority(input: UpdateAuthorityInput): UpdateAuthorityPayload @auth(permission: AUTHORITY_WRITE)
-    updateAuthorityCode(id:Int!, code:String!):   UpdateAuthorityPayload @auth(permission: AUTHORITY_WRITE)
-    createOperator(input: CreateOperatorInput):   CreateOperatorPayload @auth(permission: OPERATOR_WRITE)
-    updateOperator(input: UpdateOperatorInput):   UpdateOperatorPayload @auth(permission: OPERATOR_WRITE)
-    updateOperatorCode(id:Int!, code:String!):    UpdateOperatorPayload @auth(permission: OPERATOR_WRITE)
+    updateAuthority(input: UpdateAuthorityInput): UpdateAuthorityPayload @auth(permission: AUTHORITY_UPDATE)
+    updateAuthorityCode(id:Int!, code:String!):   UpdateAuthorityPayload @auth(permission: AUTHORITY_UPDATE)
+    createOperator(input: CreateOperatorInput):   CreateOperatorPayload @auth(permission: OPERATOR_CREATE)
+    updateOperator(input: UpdateOperatorInput):   UpdateOperatorPayload @auth(permission: OPERATOR_UPDATE)
+    updateOperatorCode(id:Int!, code:String!):    UpdateOperatorPayload @auth(permission: OPERATOR_UPDATE)
 }

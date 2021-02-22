@@ -48,10 +48,7 @@ public class ContextualizedPgPool {
         LOG.infof("tuples: %s", tuples.stream().map(Tuple::deepToString).collect(Collectors.toList()));
         return conn.preparedQuery("select set_config($1, $2, 'f');")
                 .executeBatch(tuples)
-                .map(r -> {
-                    r.iterator().forEachRemaining(row -> LOG.infof("'%s'", row.getString(1)));
-                    return conn;
-                });
+                .map(r -> conn);
     }
 }
 

@@ -6,6 +6,7 @@ import org.jboss.logging.Logger;
 import org.technbolts.busd.core.BasicExecutionContext;
 import org.technbolts.busd.core.Caller;
 import org.technbolts.busd.core.ExecutionContext;
+import org.technbolts.busd.core.Permission;
 import org.technbolts.busd.core.tenants.TenantId;
 
 import java.util.Collections;
@@ -57,6 +58,7 @@ public class QueryContext implements ExecutionContext {
             return Optional.of(Caller.caller(xCallerId, Caller.Type.valueOf(xCallerType)));
         } catch (IllegalArgumentException iae) {
             LOG.warnf("Invalid caller type format '%s', must be one of %s", xCallerType, asList(Caller.Type.values()));
+            // EMPTY or throw Exception
             return Optional.empty();
         }
     }
@@ -69,6 +71,7 @@ public class QueryContext implements ExecutionContext {
             return Optional.of(TenantId.tenantId(raw));
         } catch (NumberFormatException nfe) {
             LOG.warnf("Invalid tenantId format '%s'", xTenantId);
+            // EMPTY or throw Exception
             return Optional.empty();
         }
     }
@@ -92,7 +95,7 @@ public class QueryContext implements ExecutionContext {
     }
 
     @Override
-    public boolean hasPermission(String permission) {
+    public boolean hasPermission(Permission permission) {
         return executionContext.hasPermission(permission);
     }
 

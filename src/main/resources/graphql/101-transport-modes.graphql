@@ -49,6 +49,6 @@ extend type Query {
 }
 
 extend type Mutation {
-    createTransportMode(input: CreateTransportModeInput): CreateTransportModePayload @auth(permission: TRANSPORT_MODE_WRITE)
-    updateTransportMode(input: UpdateTransportModeInput): UpdateTransportModePayload @auth(permission: TRANSPORT_MODE_WRITE)
+    createTransportMode(input: CreateTransportModeInput): CreateTransportModePayload @auth(permission: TRANSPORT_MODE_CREATE)
+    updateTransportMode(input: UpdateTransportModeInput): UpdateTransportModePayload @auth(permission: TRANSPORT_MODE_UPDATE)
 }

@@ -2,7 +2,7 @@ type Currency {
     id: Int!
     code: String!
     label: String
-    unit_multiplier: Int
+#    unit_multiplier: Int
 }
 
 
