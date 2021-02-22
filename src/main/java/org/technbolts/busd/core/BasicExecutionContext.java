@@ -27,10 +27,9 @@ public class BasicExecutionContext implements ExecutionContext {
     }
 
     @Override
-    public boolean hasPermission(String permission) {
+    public boolean hasPermission(Permission permission) {
         try {
-            Permission p = Permission.valueOf(permission);
-            return permissions.contains(p);
+            return permissions.contains(permission);
         } catch (Exception e) {
             LOG.warnf("Invalid permission provided got: '%s'", permission);
             return false;

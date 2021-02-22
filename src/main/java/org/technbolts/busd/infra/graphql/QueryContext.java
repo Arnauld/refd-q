@@ -6,6 +6,7 @@ import org.jboss.logging.Logger;
 import org.technbolts.busd.core.BasicExecutionContext;
 import org.technbolts.busd.core.Caller;
 import org.technbolts.busd.core.ExecutionContext;
+import org.technbolts.busd.core.Permission;
 import org.technbolts.busd.core.tenants.TenantId;
 
 import java.util.Collections;
@@ -94,7 +95,7 @@ public class QueryContext implements ExecutionContext {
     }
 
     @Override
-    public boolean hasPermission(String permission) {
+    public boolean hasPermission(Permission permission) {
         return executionContext.hasPermission(permission);
     }
 

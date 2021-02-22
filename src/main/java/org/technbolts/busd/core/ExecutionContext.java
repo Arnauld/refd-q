@@ -15,7 +15,7 @@ public interface ExecutionContext {
         }
 
         @Override
-        public boolean hasPermission(String permission) {
+        public boolean hasPermission(Permission permission) {
             return false;
         }
     };
@@ -24,7 +24,7 @@ public interface ExecutionContext {
 
     Caller caller();
 
-    boolean hasPermission(String permission);
+    boolean hasPermission(Permission permission);
 
     class InvalidContextException extends RuntimeException {
         public InvalidContextException() {

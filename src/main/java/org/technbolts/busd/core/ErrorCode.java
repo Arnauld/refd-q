@@ -5,5 +5,5 @@ public enum ErrorCode {
     //
     SERVER_ERROR,
     NOOP,
-    BAD_REQUEST;
+    BAD_REQUEST, UNAUTHORIZED;
 }
